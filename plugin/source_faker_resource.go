@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/zipstack/pct-plugin-framework/fwhelpers"
 	"github.com/zipstack/pct-plugin-framework/schema"
@@ -169,9 +170,9 @@ func (r *sourceFakerResource) Create(req *schema.ServiceRequest) *schema.Service
 	}
 
 	return &schema.ServiceResponse{
-		StateID: state.SourceId,
-		// StateLastUpdated: time.Now().Format(time.RFC850),
-		StateContents: stateEnc,
+		StateID:          state.SourceId,
+		StateLastUpdated: time.Now().Format(time.RFC850),
+		StateContents:    stateEnc,
 	}
 
 }

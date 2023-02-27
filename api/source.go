@@ -3,6 +3,8 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/zipstack/pct-plugin-framework/fwhelpers"
 )
 
 type SourceFakerID struct {
@@ -10,27 +12,30 @@ type SourceFakerID struct {
 }
 
 type SourceFaker struct {
-	Name                    string                `cty:"name"`
-	SourceDefinitionId      string                `cty:"sourceDefinitionId"`
-	SourceId                string                `cty:"sourceId"`
-	WorkspaceId             string                `cty:"workspaceId"`
-	ConnectionConfiguration SourceFakerConnConfig `cty:"connectionConfiguration"`
+	Name                    string                `json:"name"`
+	SourceDefinitionId      string                `json:"sourceDefinitionId"`
+	SourceId                string                `json:"sourceId,omitempty"`
+	WorkspaceId             string                `json:"workspaceId"`
+	ConnectionConfiguration SourceFakerConnConfig `json:"connectionConfiguration"`
 }
 
 type SourceFakerConnConfig struct {
-	Seed            int64 `cty:"seed"`
-	Count           int64 `cty:"count"`
-	RecordsPerSync  int64 `cty:"records_per_sync"`
-	RecordsPerSlice int64 `cty:"records_per_slice"`
+	Seed            int64 `json:"seed"`
+	Count           int64 `json:"count"`
+	RecordsPerSync  int64 `json:"records_per_sync"`
+	RecordsPerSlice int64 `json:"records_per_slice"`
 }
 
 func (c *Client) CreateSource(payload SourceFaker) (SourceFaker, error) {
+	logger := fwhelpers.GetLogger()
+
 	method := "POST"
 	url := c.Host + "/api/v1/sources/create"
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return SourceFaker{}, err
 	}
+	logger.Printf("create payload: %s", string(body))
 
 	b, statusCode, status, _, err := c.doRequest(method, url, body, nil)
 	if err != nil {
