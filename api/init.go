@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -55,7 +55,7 @@ func (c *Client) doRequest(method string, url string, body []byte, headers map[s
 	if err != nil {
 		return nil, 500, "500 Internal Server Error", nil, err
 	}
-	b, err := ioutil.ReadAll(res.Body)
+	b, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, 500, "500 Internal Server Error", nil, err
 	}

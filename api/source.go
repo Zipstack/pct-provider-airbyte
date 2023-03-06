@@ -3,8 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/zipstack/pct-plugin-framework/fwhelpers"
 )
 
 type SourceFakerID struct {
@@ -13,9 +11,9 @@ type SourceFakerID struct {
 
 type SourceFaker struct {
 	Name                    string                `json:"name"`
-	SourceDefinitionId      string                `json:"sourceDefinitionId"`
+	SourceDefinitionId      string                `json:"sourceDefinitionId,omitempty"`
 	SourceId                string                `json:"sourceId,omitempty"`
-	WorkspaceId             string                `json:"workspaceId"`
+	WorkspaceId             string                `json:"workspaceId,omitempty"`
 	ConnectionConfiguration SourceFakerConnConfig `json:"connectionConfiguration"`
 }
 
@@ -27,7 +25,7 @@ type SourceFakerConnConfig struct {
 }
 
 func (c *Client) CreateSource(payload SourceFaker) (SourceFaker, error) {
-	logger := fwhelpers.GetLogger()
+	// logger := fwhelpers.GetLogger()
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/create"
@@ -35,9 +33,8 @@ func (c *Client) CreateSource(payload SourceFaker) (SourceFaker, error) {
 	if err != nil {
 		return SourceFaker{}, err
 	}
-	logger.Printf("create payload: %s", string(body))
 
-	b, statusCode, status, _, err := c.doRequest(method, url, body, nil)
+	b, statusCode, _, _, err := c.doRequest(method, url, body, nil)
 	if err != nil {
 		return SourceFaker{}, err
 	}
@@ -47,11 +44,18 @@ func (c *Client) CreateSource(payload SourceFaker) (SourceFaker, error) {
 		err = json.Unmarshal(b, &source)
 		return source, err
 	} else {
-		return source, fmt.Errorf(status)
+		msg, err := c.getAPIError(b)
+		if err != nil {
+			return source, err
+		} else {
+			return source, fmt.Errorf(msg)
+		}
 	}
 }
 
 func (c *Client) ReadSource(sourceId string) (SourceFaker, error) {
+	// logger := fwhelpers.GetLogger()
+
 	method := "POST"
 	url := c.Host + "/api/v1/sources/get"
 	sId := SourceFakerID{sourceId}
@@ -60,7 +64,7 @@ func (c *Client) ReadSource(sourceId string) (SourceFaker, error) {
 		return SourceFaker{}, err
 	}
 
-	b, statusCode, status, _, err := c.doRequest(method, url, body, nil)
+	b, statusCode, _, _, err := c.doRequest(method, url, body, nil)
 	if err != nil {
 		return SourceFaker{}, err
 	}
@@ -70,10 +74,68 @@ func (c *Client) ReadSource(sourceId string) (SourceFaker, error) {
 		err = json.Unmarshal(b, &source)
 		return source, err
 	} else {
-		return source, fmt.Errorf(status)
+		msg, err := c.getAPIError(b)
+		if err != nil {
+			return source, err
+		} else {
+			return source, fmt.Errorf(msg)
+		}
 	}
 }
 
-func (c *Client) UpdateSource() {}
+func (c *Client) UpdateSource(payload SourceFaker) (SourceFaker, error) {
+	// logger := fwhelpers.GetLogger()
 
-func (c *Client) DeleteSource() {}
+	method := "POST"
+	url := c.Host + "/api/v1/sources/update"
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return SourceFaker{}, err
+	}
+
+	b, statusCode, _, _, err := c.doRequest(method, url, body, nil)
+	if err != nil {
+		return SourceFaker{}, err
+	}
+
+	source := SourceFaker{}
+	if statusCode >= 200 && statusCode <= 299 {
+		err = json.Unmarshal(b, &source)
+		return source, err
+	} else {
+		msg, err := c.getAPIError(b)
+		if err != nil {
+			return source, err
+		} else {
+			return source, fmt.Errorf(msg)
+		}
+	}
+}
+
+func (c *Client) DeleteSource(sourceId string) error {
+	// logger := fwhelpers.GetLogger()
+
+	method := "POST"
+	url := c.Host + "/api/v1/sources/delete"
+	sId := SourceFakerID{sourceId}
+	body, err := json.Marshal(sId)
+	if err != nil {
+		return err
+	}
+
+	b, statusCode, _, _, err := c.doRequest(method, url, body, nil)
+	if err != nil {
+		return err
+	}
+
+	if statusCode >= 200 && statusCode <= 299 {
+		return nil
+	} else {
+		msg, err := c.getAPIError(b)
+		if err != nil {
+			return err
+		} else {
+			return fmt.Errorf(msg)
+		}
+	}
+}

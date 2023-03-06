@@ -126,6 +126,7 @@ func (r *sourceFakerResource) Schema() *schema.ServiceResponse {
 func (r *sourceFakerResource) Create(req *schema.ServiceRequest) *schema.ServiceResponse {
 	// logger := fwhelpers.GetLogger()
 
+	// Retrieve values from plan
 	var plan sourceFakerResourceModel
 	err := fwhelpers.UnpackModel(req.PlanContents, &plan)
 	if err != nil {
@@ -150,7 +151,7 @@ func (r *sourceFakerResource) Create(req *schema.ServiceRequest) *schema.Service
 		return schema.ErrorResponse(err)
 	}
 
-	// Map response body to schema
+	// Update resource state with response body
 	state := sourceFakerResourceModel{}
 	state.Name = source.Name
 	state.SourceDefinitionId = source.SourceDefinitionId
@@ -171,10 +172,9 @@ func (r *sourceFakerResource) Create(req *schema.ServiceRequest) *schema.Service
 
 	return &schema.ServiceResponse{
 		StateID:          state.SourceId,
-		StateLastUpdated: time.Now().Format(time.RFC850),
 		StateContents:    stateEnc,
+		StateLastUpdated: time.Now().Format(time.RFC850),
 	}
-
 }
 
 // Read resource information
@@ -191,8 +191,9 @@ func (r *sourceFakerResource) Read(req *schema.ServiceRequest) *schema.ServiceRe
 
 	res := schema.ServiceResponse{}
 
-	if state.SourceId != "" {
-		source, err := r.Client.ReadSource(state.SourceId)
+	if req.StateID != "" {
+		// Query using existing previous state.
+		source, err := r.Client.ReadSource(req.StateID)
 		if err != nil {
 			return schema.ErrorResponse(err)
 		}
@@ -210,7 +211,9 @@ func (r *sourceFakerResource) Read(req *schema.ServiceRequest) *schema.ServiceRe
 		state.ConnectionConfiguration.RecordsPerSlice = source.ConnectionConfiguration.RecordsPerSlice
 
 		res.StateID = state.SourceId
-		// res.StateLastUpdated = time.Now().Format(time.RFC850)
+	} else {
+		// No previous state exists.
+		res.StateID = state.SourceId
 	}
 
 	// Set refreshed state
@@ -224,63 +227,71 @@ func (r *sourceFakerResource) Read(req *schema.ServiceRequest) *schema.ServiceRe
 }
 
 func (r *sourceFakerResource) Update(req *schema.ServiceRequest) *schema.ServiceResponse {
-	return &schema.ServiceResponse{}
+	// logger := fwhelpers.GetLogger()
 
-	// // Retrieve values from plan
-	// var plan sourceResourceModel
-	// err := fwhelpers.UnpackModel(req.StateContents, &plan)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	// Retrieve values from plan
+	var plan sourceFakerResourceModel
+	err := fwhelpers.UnpackModel(req.PlanContents, &plan)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
 
-	// // Generate API request body from plan
-	// // plan??
+	// Generate API request body from plan
+	body := api.SourceFaker{}
+	body.Name = plan.Name
+	body.SourceId = plan.SourceId
 
-	// // Update existing source
-	// source, err := r.Client.UpdateSource(plan)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	body.ConnectionConfiguration = api.SourceFakerConnConfig{}
+	body.ConnectionConfiguration.Seed = plan.ConnectionConfiguration.Seed
+	body.ConnectionConfiguration.Count = plan.ConnectionConfiguration.Count
+	body.ConnectionConfiguration.RecordsPerSync = plan.ConnectionConfiguration.RecordsPerSync
+	body.ConnectionConfiguration.RecordsPerSlice = plan.ConnectionConfiguration.RecordsPerSlice
 
-	// // Fetch updated items from GetSource as UpdateSource items are not
-	// // populated.
-	// source, err := r.Client.GetSource(state.ID)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	// Update existing source
+	_, err = r.Client.UpdateSource(body)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
 
-	// // Update resource state with updated items and timestamp
-	// state.Items = []sourceResourceModel{}
-	// // fill state.Items with source
-	// // plan.LastUpdated = types.StringValue(time.Now().Format(time.RFC850))
+	// Fetch updated items from GetSource
+	source, err := r.Client.ReadSource(plan.SourceId)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
 
-	// // Set refreshed state
-	// stateEnc, err := fwhelpers.Encode(state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	// Update resource state with response body
+	state := sourceFakerResourceModel{}
+	state.Name = source.Name
+	state.SourceDefinitionId = source.SourceDefinitionId
+	state.SourceId = source.SourceId
+	state.WorkspaceId = source.WorkspaceId
 
-	// return &schema.ServiceResponse{
-	// 	StateContents: stateEnc,
-	// }
+	state.ConnectionConfiguration = sourceFakerConnConfigModel{}
+	state.ConnectionConfiguration.Seed = source.ConnectionConfiguration.Seed
+	state.ConnectionConfiguration.Count = source.ConnectionConfiguration.Count
+	state.ConnectionConfiguration.RecordsPerSync = source.ConnectionConfiguration.RecordsPerSync
+	state.ConnectionConfiguration.RecordsPerSlice = source.ConnectionConfiguration.RecordsPerSlice
+
+	// Set refreshed state
+	stateEnc, err := fwhelpers.PackModel(nil, &state)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
+	return &schema.ServiceResponse{
+		StateID:          state.SourceId,
+		StateContents:    stateEnc,
+		StateLastUpdated: time.Now().Format(time.RFC850),
+	}
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
 func (r *sourceFakerResource) Delete(req *schema.ServiceRequest) *schema.ServiceResponse {
+	// Delete existing source
+	err := r.Client.DeleteSource(req.StateID)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
 	return &schema.ServiceResponse{}
-
-	// // Retrieve values from state
-	// var state sourceResourceModel
-	// err := fwhelpers.UnpackModel(req.StateContents, &state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
-
-	// // Delete existing source
-	// source, err := r.Client.DeleteSource(state.ID)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
-
-	// return &schema.ServiceResponse{}
 }
