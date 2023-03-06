@@ -198,7 +198,7 @@ func (r *sourceFakerResource) Read(req *schema.ServiceRequest) *schema.ServiceRe
 			return schema.ErrorResponse(err)
 		}
 
-		// Overwrite state with refreshed value
+		// Update state with refreshed value
 		state.Name = source.Name
 		state.SourceDefinitionId = source.SourceDefinitionId
 		state.SourceId = source.SourceId
@@ -213,7 +213,7 @@ func (r *sourceFakerResource) Read(req *schema.ServiceRequest) *schema.ServiceRe
 		res.StateID = state.SourceId
 	} else {
 		// No previous state exists.
-		res.StateID = state.SourceId
+		res.StateID = ""
 	}
 
 	// Set refreshed state
@@ -253,13 +253,13 @@ func (r *sourceFakerResource) Update(req *schema.ServiceRequest) *schema.Service
 		return schema.ErrorResponse(err)
 	}
 
-	// Fetch updated items from GetSource
-	source, err := r.Client.ReadSource(plan.SourceId)
+	// Fetch updated items
+	source, err := r.Client.ReadSource(req.PlanID)
 	if err != nil {
 		return schema.ErrorResponse(err)
 	}
 
-	// Update resource state with response body
+	// Update state with refreshed value
 	state := sourceFakerResourceModel{}
 	state.Name = source.Name
 	state.SourceDefinitionId = source.SourceDefinitionId
