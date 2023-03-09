@@ -93,8 +93,13 @@ func (p *Provider) Configure(req *schema.ServiceRequest) *schema.ServiceResponse
 		p.Client = client
 	}
 
-	// Make API client available for Resource type Configure methods.
-	cEnc, err := fwhelpers.Encode(p.Client)
+	// Make API creds available for Resource type Configure methods.
+	creds := map[string]string{
+		"host":     pm.Host,
+		"username": pm.Username,
+		"password": pm.Password,
+	}
+	cEnc, err := fwhelpers.Encode(creds)
 	if err != nil {
 		return schema.ErrorResponse(err)
 	}

@@ -54,10 +54,17 @@ func (r *sourceFakerResource) Configure(req *schema.ServiceRequest) *schema.Serv
 		return schema.ErrorResponse(fmt.Errorf("no data provided to configure resource"))
 	}
 
-	var client *api.Client
-	err := fwhelpers.Decode(req.ResourceData, &client)
+	var creds map[string]string
+	err := fwhelpers.Decode(req.ResourceData, &creds)
 	if err != nil {
 		return schema.ErrorResponse(err)
+	}
+
+	client, err := api.NewClient(
+		creds["host"], creds["username"], creds["password"],
+	)
+	if err != nil {
+		return schema.ErrorResponse(fmt.Errorf("malformed data provided to configure resource"))
 	}
 
 	r.Client = client
