@@ -42,7 +42,7 @@ func (p *Provider) Metadata(req *schema.ServiceRequest) *schema.ServiceResponse 
 // Schema defines the provider-level schema for configuration data.
 func (p *Provider) Schema() *schema.ServiceResponse {
 	s := &schema.Schema{
-		Description: "Provider plugin for Airbyte",
+		Description: "Airbyte provider plugin",
 		Attributes: map[string]schema.Attribute{
 			"host": &schema.StringAttribute{
 				Description: "URI for Airbyte API. May also be provided via AIRBYTE_HOST environment variable.",

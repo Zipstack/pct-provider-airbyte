@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -22,7 +23,7 @@ func (c *Client) getAPIError(body []byte) (string, error) {
 	apiErr := APIError{}
 	err := json.Unmarshal(body, &apiErr)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("content type mismatch or invalid provider api host or path")
 	} else {
 		slices := strings.Split(apiErr.Message, "at [Source:")
 		return strings.TrimSpace(slices[0]), nil
