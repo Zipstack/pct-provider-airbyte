@@ -325,7 +325,7 @@ func (r *destinationPostgresResource) Update(req *schema.ServiceRequest) *schema
 	// }
 }
 
-// Delete deletes the resource and removes the Terraform state on success.
+// Delete deletes the resource and removes the state on success.
 func (r *destinationPostgresResource) Delete(req *schema.ServiceRequest) *schema.ServiceResponse {
 	return &schema.ServiceResponse{}
 

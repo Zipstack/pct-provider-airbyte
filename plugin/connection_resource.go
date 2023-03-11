@@ -379,7 +379,7 @@ func (r *connectionResource) Update(req *schema.ServiceRequest) *schema.ServiceR
 	// }
 }
 
-// Delete deletes the resource and removes the Terraform state on success.
+// Delete deletes the resource and removes the state on success.
 func (r *connectionResource) Delete(req *schema.ServiceRequest) *schema.ServiceResponse {
 	return &schema.ServiceResponse{}
 

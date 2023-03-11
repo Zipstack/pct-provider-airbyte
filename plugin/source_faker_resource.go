@@ -292,7 +292,7 @@ func (r *sourceFakerResource) Update(req *schema.ServiceRequest) *schema.Service
 	}
 }
 
-// Delete deletes the resource and removes the Terraform state on success.
+// Delete deletes the resource and removes the state on success.
 func (r *sourceFakerResource) Delete(req *schema.ServiceRequest) *schema.ServiceResponse {
 	// Delete existing source
 	err := r.Client.DeleteSource(req.StateID)
