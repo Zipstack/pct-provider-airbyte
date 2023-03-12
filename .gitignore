@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+pct-provider-airbyte
 
 # Test binary, built with `go test -c`
 *.test
