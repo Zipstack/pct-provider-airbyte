@@ -15,5 +15,7 @@ func main() {
 		plugin.NewSourceFakerResource,
 		plugin.NewDestinationPostgresResource,
 		plugin.NewConnectionResource,
+		plugin.NewsourcePipedriveResource,
+		plugin.NewdestinationLocalCSVResource,
 	})
 }
