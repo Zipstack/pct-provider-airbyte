@@ -81,7 +81,7 @@ func (r *sourceHubspotResource) Configure(req *schema.ServiceRequest) *schema.Se
 // Schema defines the schema for the resource.
 func (r *sourceHubspotResource) Schema() *schema.ServiceResponse {
 	s := &schema.Schema{
-		Description: "Source pipedrive resource for Airbyte",
+		Description: "Source Hubspot resource for Airbyte",
 		Attributes: map[string]schema.Attribute{
 			"name": &schema.StringAttribute{
 				Description: "Name",

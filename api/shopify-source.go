@@ -33,9 +33,6 @@ type ShopifyCredConfigModel struct {
 
 func (c *Client) CreateShopifySource(payload SourceShopify) (SourceShopify, error) {
 	// logger := fwhelpers.GetLogger()
-
-	fmt.Printf("coming here %#v\n", payload)
-
 	method := "POST"
 	url := c.Host + "/api/v1/sources/create"
 	body, err := json.Marshal(payload)
@@ -47,7 +44,6 @@ func (c *Client) CreateShopifySource(payload SourceShopify) (SourceShopify, erro
 	if err != nil {
 		return SourceShopify{}, err
 	}
-	fmt.Printf("statusCode %#v\n", statusCode)
 	source := SourceShopify{}
 	if statusCode >= 200 && statusCode <= 299 {
 		err = json.Unmarshal(b, &source)
@@ -67,7 +63,7 @@ func (c *Client) ReadShopifySource(sourceId string) (SourceShopify, error) {
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/get"
-	sId := SourcePipedriveID{sourceId}
+	sId := SourceShopifyID{sourceId}
 	body, err := json.Marshal(sId)
 	if err != nil {
 		return SourceShopify{}, err

@@ -76,7 +76,7 @@ func (r *sourceStripeResource) Configure(req *schema.ServiceRequest) *schema.Ser
 // Schema defines the schema for the resource.
 func (r *sourceStripeResource) Schema() *schema.ServiceResponse {
 	s := &schema.Schema{
-		Description: "Source pipedrive resource for Airbyte",
+		Description: "Source stripe resource for Airbyte",
 		Attributes: map[string]schema.Attribute{
 			"name": &schema.StringAttribute{
 				Description: "Name",

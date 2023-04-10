@@ -75,7 +75,7 @@ func (r *sourceFreshdeskResource) Configure(req *schema.ServiceRequest) *schema.
 // Schema defines the schema for the resource.
 func (r *sourceFreshdeskResource) Schema() *schema.ServiceResponse {
 	s := &schema.Schema{
-		Description: "Source pipedrive resource for Airbyte",
+		Description: "Source freshdesk resource for Airbyte",
 		Attributes: map[string]schema.Attribute{
 			"name": &schema.StringAttribute{
 				Description: "Name",

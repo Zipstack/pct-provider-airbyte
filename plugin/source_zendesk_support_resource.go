@@ -82,7 +82,7 @@ func (r *sourceZendeskSupportResource) Configure(req *schema.ServiceRequest) *sc
 // Schema defines the schema for the resource.
 func (r *sourceZendeskSupportResource) Schema() *schema.ServiceResponse {
 	s := &schema.Schema{
-		Description: "Source pipedrive resource for Airbyte",
+		Description: "Source zendesk resource for Airbyte",
 		Attributes: map[string]schema.Attribute{
 			"name": &schema.StringAttribute{
 				Description: "Name",

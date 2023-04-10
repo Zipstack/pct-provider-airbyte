@@ -32,9 +32,6 @@ type ZendeskSupportCredConfigModel struct {
 
 func (c *Client) CreateZendeskSupportSource(payload SourceZendeskSupport) (SourceZendeskSupport, error) {
 	// logger := fwhelpers.GetLogger()
-
-	fmt.Printf("coming here %#v\n", payload)
-
 	method := "POST"
 	url := c.Host + "/api/v1/sources/create"
 	body, err := json.Marshal(payload)
@@ -46,7 +43,6 @@ func (c *Client) CreateZendeskSupportSource(payload SourceZendeskSupport) (Sourc
 	if err != nil {
 		return SourceZendeskSupport{}, err
 	}
-	fmt.Printf("statusCode %#v\n", statusCode)
 	source := SourceZendeskSupport{}
 	if statusCode >= 200 && statusCode <= 299 {
 		err = json.Unmarshal(b, &source)
@@ -66,7 +62,7 @@ func (c *Client) ReadZendeskSupportSource(sourceId string) (SourceZendeskSupport
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/get"
-	sId := SourcePipedriveID{sourceId}
+	sId := SourceZendeskSupportID{sourceId}
 	body, err := json.Marshal(sId)
 	if err != nil {
 		return SourceZendeskSupport{}, err

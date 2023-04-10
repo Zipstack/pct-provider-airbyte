@@ -27,9 +27,6 @@ type SourceStripeConnConfig struct {
 
 func (c *Client) CreateStripeSource(payload SourceStripe) (SourceStripe, error) {
 	// logger := fwhelpers.GetLogger()
-
-	fmt.Printf("coming here %#v\n", payload)
-
 	method := "POST"
 	url := c.Host + "/api/v1/sources/create"
 	body, err := json.Marshal(payload)
@@ -41,7 +38,6 @@ func (c *Client) CreateStripeSource(payload SourceStripe) (SourceStripe, error) 
 	if err != nil {
 		return SourceStripe{}, err
 	}
-	fmt.Printf("statusCode %#v\n", statusCode)
 	source := SourceStripe{}
 	if statusCode >= 200 && statusCode <= 299 {
 		err = json.Unmarshal(b, &source)
@@ -61,7 +57,7 @@ func (c *Client) ReadStripeSource(sourceId string) (SourceStripe, error) {
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/get"
-	sId := SourcePipedriveID{sourceId}
+	sId := SourceStripeID{sourceId}
 	body, err := json.Marshal(sId)
 	if err != nil {
 		return SourceStripe{}, err

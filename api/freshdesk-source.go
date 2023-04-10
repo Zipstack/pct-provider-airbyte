@@ -26,9 +26,6 @@ type SourceFreshdeskConnConfig struct {
 
 func (c *Client) CreateFreshdeskSource(payload SourceFreshdesk) (SourceFreshdesk, error) {
 	// logger := fwhelpers.GetLogger()
-
-	fmt.Printf("coming here %#v\n", payload)
-
 	method := "POST"
 	url := c.Host + "/api/v1/sources/create"
 	body, err := json.Marshal(payload)
@@ -40,7 +37,6 @@ func (c *Client) CreateFreshdeskSource(payload SourceFreshdesk) (SourceFreshdesk
 	if err != nil {
 		return SourceFreshdesk{}, err
 	}
-	fmt.Printf("statusCode %#v\n", statusCode)
 	source := SourceFreshdesk{}
 	if statusCode >= 200 && statusCode <= 299 {
 		err = json.Unmarshal(b, &source)
@@ -60,7 +56,7 @@ func (c *Client) ReadFreshdeskSource(sourceId string) (SourceFreshdesk, error) {
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/get"
-	sId := SourcePipedriveID{sourceId}
+	sId := SourceFreshdeskID{sourceId}
 	body, err := json.Marshal(sId)
 	if err != nil {
 		return SourceFreshdesk{}, err
