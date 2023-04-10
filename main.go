@@ -15,5 +15,13 @@ func main() {
 		plugin.NewSourceFakerResource,
 		plugin.NewDestinationPostgresResource,
 		plugin.NewConnectionResource,
+		// plugin.NewsourcePipedriveResource,
+		// plugin.NewdestinationLocalCSVResource,
+		plugin.NewsourceStripeResource,
+		plugin.NewsourceAmplitudeResource,
+		plugin.NewsourceShopifyResource,
+		plugin.NewsourceFreshdeskResource,
+		plugin.NewsourceZendeskSupportResource,
+		plugin.NewsourceHubspotResource,
 	})
 }
