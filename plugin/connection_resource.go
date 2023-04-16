@@ -15,41 +15,36 @@ type connectionResource struct {
 }
 
 type connectionResourceModel struct {
-	Name          string `cty:"name"`
-	SourceID      string `cty:"source_id"`
-	DestinationID string `cty:"destination_id"`
-	ConnectionID  string `cty:"connection_id"`
-	// NamespaceDefinition          string           `cty:"namespace_definition"`
-	// NamespaceFormat              string           `cty:"namespace_format"`
-	// Status                       string           `cty:"status"`
-	// Prefix                       string           `cty:"prefix"`
-	ScheduleType string           `cty:"schedule_type"`
-	ScheduleData connScheduleData `cty:"schedule_data"`
-	//NonBreakingChangesPreference string           `cty:"non_breaking_changes_preference"`
-	SourceCatalogId string `cty:"source_catalog_id"`
-	// OperatorConfiguration connOperatorConfig `json:"operator_configuration"`
+	Name          string           `pctsdk:"name"`
+	SourceID      string           `pctsdk:"source_id"`
+	DestinationID string           `pctsdk:"destination_id"`
+	ConnectionID  string           `pctsdk:"connection_id"`
+	Status        string           `pctsdk:"status"`
+	ScheduleType  string           `pctsdk:"schedule_type"`
+	ScheduleData  connScheduleData `pctsdk:"schedule_data"`
+	// OperatorConfiguration connOperatorConfig `pctsdk:"operator_configuration"`
 }
 
 type connScheduleData struct {
-	BasicSchedule connScheduleDataBasicSchedule `cty:"basic_schedule"`
-	Cron          connScheduleDataCron          `cty:"cron"`
+	BasicSchedule connScheduleDataBasicSchedule `pctsdk:"basic_schedule,omitempty"`
+	Cron          connScheduleDataCron          `pctsdk:"cron,omitempty"`
 }
 
 type connScheduleDataBasicSchedule struct {
-	TimeUnit string `cty:"time_unit"`
-	Units    int64  `cty:"units"`
+	TimeUnit string `pctsdk:"time_unit"`
+	Units    int64  `pctsdk:"units"`
 }
 
 type connScheduleDataCron struct {
-	CronExpression string `cty:"cron_expression"`
-	CronTimeZone   string `cty:"cron_time_zone"`
+	CronExpression string `pctsdk:"cron_expression"`
+	CronTimeZone   string `pctsdk:"cron_time_zone"`
 }
 
 // type connOperatorConfig struct {
-// 	OperatorType  string                          `cty:"operator_type"`
-// 	Normalization connOperatorConfigNormalization `cty:"normalization"`
-// 	Dbt           connOperatorConfigDbt           `cty:"dbt"`
-// 	Webhook       connOperatorConfigWebhook       `cty:"webhook"`
+// 	OperatorType  string                          `pctsdk:"operator_type"`
+// 	Normalization connOperatorConfigNormalization `pctsdk:"normalization"`
+// 	Dbt           connOperatorConfigDbt           `pctsdk:"dbt"`
+// 	Webhook       connOperatorConfigWebhook       `pctsdk:"webhook"`
 // }
 
 // type connOperatorConfigNormalization struct {
@@ -57,21 +52,21 @@ type connScheduleDataCron struct {
 // }
 
 // type connOperatorConfigDbt struct {
-// 	GitRepoUrl    string `cty:"git_repo_url"`
-// 	GitRepoBranch string `cty:"git_repo_branch"`
-// 	DockerImage   string `cty:"docker_image"`
-// 	DbtArguments  string `cty:"dbt_arguments"`
+// 	GitRepoUrl    string `pctsdk:"git_repo_url"`
+// 	GitRepoBranch string `pctsdk:"git_repo_branch"`
+// 	DockerImage   string `pctsdk:"docker_image"`
+// 	DbtArguments  string `pctsdk:"dbt_arguments"`
 // }
 
 // type connOperatorConfigWebhook struct {
-// 	WebhookConfigId string                            `cty:"webhook_config_id"`
-// 	WebhookType     string                            `cty:"webhook_type"`
-// 	DbtCloud        connOperatorConfigWebhookDbtCloud `cty:"dbt_cloud"`
+// 	WebhookConfigId string                            `pctsdk:"webhook_config_id"`
+// 	WebhookType     string                            `pctsdk:"webhook_type"`
+// 	DbtCloud        connOperatorConfigWebhookDbtCloud `pctsdk:"dbt_cloud"`
 // }
 
 // type connOperatorConfigWebhookDbtCloud struct {
-// 	AccountId int64 `cty:"account_id"`
-// 	JobId     int64 `cty:"job_id"`
+// 	AccountId int64 `pctsdk:"account_id"`
+// 	JobId     int64 `pctsdk:"job_id"`
 // }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -128,54 +123,31 @@ func (r *connectionResource) Schema() *schema.ServiceResponse {
 			"source_id": &schema.StringAttribute{
 				Description: "Source ID",
 				Required:    true,
-				// Computed: true,
 			},
 			"destination_id": &schema.StringAttribute{
 				Description: "Destination ID",
 				Required:    true,
-				// Computed: true,
 			},
 			"connection_id": &schema.StringAttribute{
 				Description: "Connection ID",
-				Required:    false,
 				Computed:    true,
 			},
-			// "namespace_definition": &schema.StringAttribute{
-			// 	Description: "Namespace definition",
-			// 	Required:    true,
-			// },
-			// "namespace_format": &schema.StringAttribute{
-			// 	Description: "Namespace format",
-			// 	Required:    true,
-			// },
-			// "status": &schema.StringAttribute{
-			// 	Description: "Status",
-			// 	Required:    true,
-			// },
-			// "prefix": &schema.StringAttribute{
-			// 	Description: "Prefix",
-			// 	Required:    true,
-			// },
-			// "non_breaking_changes_preference": &schema.StringAttribute{
-			// 	Description: "non breaking changes preference",
-			// 	Required:    true,
-			// },
+			"status": &schema.StringAttribute{
+				Description: "Status",
+				Required:    true,
+			},
 			"schedule_type": &schema.StringAttribute{
 				Description: "Schedule type",
 				Required:    true,
 			},
-			"source_catalog_id": &schema.StringAttribute{
-				Description: "Source Catalog ID",
-				Required:    true,
-			},
 			"schedule_data": &schema.MapAttribute{
-				Description: "Schedule data",
-				Required:    true,
+				Description:  "Schedule data",
+				Required:     true,
+				ExactlyOneOf: []string{"basic_schedule", "cron"},
 				Attributes: map[string]schema.Attribute{
 					"basic_schedule": &schema.MapAttribute{
 						Description: "Basic schedule",
 						Required:    true,
-						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"time_unit": &schema.StringAttribute{
 								Description: "Time unit",
@@ -190,7 +162,6 @@ func (r *connectionResource) Schema() *schema.ServiceResponse {
 					"cron": &schema.MapAttribute{
 						Description: "Cron",
 						Required:    true,
-						Optional:    true,
 						Attributes: map[string]schema.Attribute{
 							"cron_time_zone": &schema.StringAttribute{
 								Description: "Cron time zone",
@@ -289,13 +260,10 @@ func (r *connectionResource) Schema() *schema.ServiceResponse {
 
 // Create a new resource
 func (r *connectionResource) Create(req *schema.ServiceRequest) *schema.ServiceResponse {
-
-	logger := fwhelpers.GetLogger()
+	// logger := fwhelpers.GetLogger()
 
 	var plan connectionResourceModel
 	err := fwhelpers.UnpackModel(req.PlanContents, &plan)
-
-	logger.Printf("create call for connection %#v", err)
 	if err != nil {
 		return schema.ErrorResponse(err)
 	}
@@ -304,23 +272,22 @@ func (r *connectionResource) Create(req *schema.ServiceRequest) *schema.ServiceR
 	body.Name = plan.Name
 	body.SourceID = plan.SourceID
 	body.DestinationID = plan.DestinationID
-	// body.Prefix = plan.Prefix
-	// body.NamespaceDefinition = plan.NamespaceDefinition
-	// body.NamespaceFormat = plan.NamespaceFormat
-	// body.NonBreakingChangesPreference = plan.NonBreakingChangesPreference
+
 	body.ScheduleType = plan.ScheduleType
 	body.ScheduleData = api.ConnScheduleData{}
 
-	body.ScheduleData.BasicSchedule = api.ConnScheduleDataBasicSchedule{}
-	body.ScheduleData.BasicSchedule.TimeUnit = plan.ScheduleData.BasicSchedule.TimeUnit
-	body.ScheduleData.BasicSchedule.Units = plan.ScheduleData.BasicSchedule.Units
+	if plan.ScheduleType == "basic" {
+		body.ScheduleData.BasicSchedule = api.ConnScheduleDataBasicSchedule{}
+		body.ScheduleData.BasicSchedule.TimeUnit = plan.ScheduleData.BasicSchedule.TimeUnit
+		body.ScheduleData.BasicSchedule.Units = plan.ScheduleData.BasicSchedule.Units
+	} else if plan.ScheduleType == "cron" {
+		body.ScheduleData.Cron = api.ConnScheduleDataCron{}
+		body.ScheduleData.Cron.CronExpression = plan.ScheduleData.Cron.CronExpression
+		body.ScheduleData.Cron.CronTimeZone = plan.ScheduleData.Cron.CronTimeZone
+	}
 
-	body.ScheduleData.Cron = api.ConnScheduleDataCron{}
-	body.ScheduleData.Cron.CronExpression = plan.ScheduleData.Cron.CronExpression
-	body.ScheduleData.Cron.CronTimeZone = plan.ScheduleData.Cron.CronTimeZone
+	body.Status = plan.Status
 
-	body.SourceCatalogId = plan.SourceCatalogId
-	fmt.Print("create client call for connection")
 	connection, err := r.Client.CreateConnectionResource(body)
 	if err != nil {
 		return schema.ErrorResponse(err)
@@ -330,27 +297,26 @@ func (r *connectionResource) Create(req *schema.ServiceRequest) *schema.ServiceR
 	state := connectionResourceModel{}
 
 	state.Name = connection.Name
+	state.ConnectionID = connection.ConnectionID
 	state.SourceID = connection.SourceID
 	state.DestinationID = connection.DestinationID
-	// state.Prefix = connection.Prefix
-	// state.NamespaceDefinition = connection.NamespaceDefinition
-	// state.NamespaceFormat = connection.NamespaceFormat
-	// state.NonBreakingChangesPreference = connection.NonBreakingChangesPreference
+
 	state.ScheduleType = connection.ScheduleType
 	state.ScheduleData = connScheduleData{}
 
-	// state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
-	// state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
-	// state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+	if connection.ScheduleType == "basic" {
+		state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
+		state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
+		state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+	} else if connection.ScheduleType == "cron" {
+		state.ScheduleData.Cron = connScheduleDataCron{}
+		state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
+		state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+	}
 
-	state.ScheduleData.Cron = connScheduleDataCron{}
-	state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
-	state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+	state.Status = connection.Status
 
-	state.SourceCatalogId = connection.SourceCatalogId
-	state.ConnectionID = connection.ConnecctionID
-
-	stateEnc, err := fwhelpers.Encode(state)
+	stateEnc, err := fwhelpers.PackModel(nil, &state)
 	if err != nil {
 		return schema.ErrorResponse(err)
 	}
@@ -364,7 +330,6 @@ func (r *connectionResource) Create(req *schema.ServiceRequest) *schema.ServiceR
 
 // Read resource information
 func (r *connectionResource) Read(req *schema.ServiceRequest) *schema.ServiceResponse {
-
 	var state connectionResourceModel
 
 	// Get current state
@@ -382,31 +347,34 @@ func (r *connectionResource) Read(req *schema.ServiceRequest) *schema.ServiceRes
 			return schema.ErrorResponse(err)
 		}
 
+		state = connectionResourceModel{}
+
 		// Update state with refreshed value
 		state.Name = connection.Name
+		state.ConnectionID = connection.ConnectionID
 		state.SourceID = connection.SourceID
 		state.DestinationID = connection.DestinationID
-		// state.Prefix = connection.Prefix
-		// state.NamespaceDefinition = connection.NamespaceDefinition
-		// state.NamespaceFormat = connection.NamespaceFormat
-		// state.NonBreakingChangesPreference = connection.NonBreakingChangesPreference
+
 		state.ScheduleType = connection.ScheduleType
 		state.ScheduleData = connScheduleData{}
 
-		state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
-		state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
-		state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+		if connection.ScheduleType == "basic" {
+			state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
+			state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
+			state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+		} else if connection.ScheduleType == "cron" {
+			state.ScheduleData.Cron = connScheduleDataCron{}
+			state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
+			state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+		}
 
-		state.ScheduleData.Cron = connScheduleDataCron{}
-		state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
-		state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+		state.Status = connection.Status
 
-		state.SourceCatalogId = connection.SourceCatalogId
-		state.ConnectionID = connection.ConnecctionID
-
+		res.StateID = connection.ConnectionID
 	} else {
 		// No previous state exists.
 		res.StateID = ""
+		res.StateLastUpdated = ""
 	}
 
 	// Set refreshed state
@@ -428,25 +396,26 @@ func (r *connectionResource) Update(req *schema.ServiceRequest) *schema.ServiceR
 
 	// Generate API request body from plan
 	body := api.ConnectionResource{}
+
 	body.Name = plan.Name
+	body.ConnectionID = plan.ConnectionID
 	body.SourceID = plan.SourceID
 	body.DestinationID = plan.DestinationID
-	// body.Prefix = plan.Prefix
-	// body.NamespaceDefinition = plan.NamespaceDefinition
-	// body.NamespaceFormat = plan.NamespaceFormat
-	// body.NonBreakingChangesPreference = plan.NonBreakingChangesPreference
+
 	body.ScheduleType = plan.ScheduleType
 	body.ScheduleData = api.ConnScheduleData{}
 
-	body.ScheduleData.BasicSchedule = api.ConnScheduleDataBasicSchedule{}
-	body.ScheduleData.BasicSchedule.TimeUnit = plan.ScheduleData.BasicSchedule.TimeUnit
-	body.ScheduleData.BasicSchedule.Units = plan.ScheduleData.BasicSchedule.Units
+	if plan.ScheduleType == "basic" {
+		body.ScheduleData.BasicSchedule = api.ConnScheduleDataBasicSchedule{}
+		body.ScheduleData.BasicSchedule.TimeUnit = plan.ScheduleData.BasicSchedule.TimeUnit
+		body.ScheduleData.BasicSchedule.Units = plan.ScheduleData.BasicSchedule.Units
+	} else if plan.ScheduleType == "cron" {
+		body.ScheduleData.Cron = api.ConnScheduleDataCron{}
+		body.ScheduleData.Cron.CronExpression = plan.ScheduleData.Cron.CronExpression
+		body.ScheduleData.Cron.CronTimeZone = plan.ScheduleData.Cron.CronTimeZone
+	}
 
-	body.ScheduleData.Cron = api.ConnScheduleDataCron{}
-	body.ScheduleData.Cron.CronExpression = plan.ScheduleData.Cron.CronExpression
-	body.ScheduleData.Cron.CronTimeZone = plan.ScheduleData.Cron.CronTimeZone
-
-	body.SourceCatalogId = plan.SourceCatalogId
+	body.Status = plan.Status
 
 	// Update existing source
 	_, err = r.Client.UpdateConnectionResource(body)
@@ -464,25 +433,24 @@ func (r *connectionResource) Update(req *schema.ServiceRequest) *schema.ServiceR
 	state := connectionResourceModel{}
 
 	state.Name = connection.Name
+	state.ConnectionID = connection.ConnectionID
 	state.SourceID = connection.SourceID
 	state.DestinationID = connection.DestinationID
-	// state.Prefix = connection.Prefix
-	// state.NamespaceDefinition = connection.NamespaceDefinition
-	// state.NamespaceFormat = connection.NamespaceFormat
-	// state.NonBreakingChangesPreference = connection.NonBreakingChangesPreference
+
 	state.ScheduleType = connection.ScheduleType
 	state.ScheduleData = connScheduleData{}
 
-	state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
-	state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
-	state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+	if connection.ScheduleType == "basic" {
+		state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
+		state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
+		state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+	} else if connection.ScheduleType == "cron" {
+		state.ScheduleData.Cron = connScheduleDataCron{}
+		state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
+		state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+	}
 
-	state.ScheduleData.Cron = connScheduleDataCron{}
-	state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
-	state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
-
-	state.SourceCatalogId = connection.SourceCatalogId
-	state.ConnectionID = connection.ConnecctionID
+	state.Status = connection.Status
 
 	// Set refreshed state
 	stateEnc, err := fwhelpers.PackModel(nil, &state)
@@ -499,20 +467,11 @@ func (r *connectionResource) Update(req *schema.ServiceRequest) *schema.ServiceR
 
 // Delete deletes the resource and removes the state on success.
 func (r *connectionResource) Delete(req *schema.ServiceRequest) *schema.ServiceResponse {
+	// Delete existing source
+	err := r.Client.DeleteConnectionResource(req.StateID)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
 	return &schema.ServiceResponse{}
-
-	// // Retrieve values from state
-	// var state sourceResourceModel
-	// err := fwhelpers.UnpackModel(req.StateContents, &state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
-
-	// // Delete existing source
-	// source, err := r.Client.DeleteSource(state.ID)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
-
-	// return &schema.ServiceResponse{}
 }

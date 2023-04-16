@@ -12,10 +12,12 @@ var version string
 
 func main() {
 	server.Serve(version, plugin.NewProvider, []func() schema.ResourceService{
-		plugin.NewSourceFakerResource,
-		plugin.NewDestinationPostgresResource,
 		plugin.NewConnectionResource,
-		plugin.NewsourcePipedriveResource,
-		plugin.NewdestinationLocalCSVResource,
+
+		plugin.NewSourcePipedriveResource,
+		// plugin.NewSourceFakerResource,
+
+		plugin.NewDestinationLocalCSVResource,
+		// plugin.NewDestinationPostgresResource,
 	})
 }

@@ -26,10 +26,8 @@ type DestinationDelimiterConfigModel struct {
 	Delimiter string `json:"delimiter"`
 }
 
-func (c *Client) CreateLocalSCVSource(payload DestinationLocalCSV) (DestinationLocalCSV, error) {
+func (c *Client) CreateLocalCSVDestination(payload DestinationLocalCSV) (DestinationLocalCSV, error) {
 	// logger := fwhelpers.GetLogger()
-
-	fmt.Printf("coming here %#v\n", payload)
 
 	method := "POST"
 	url := c.Host + "/api/v1/destinations/create"
@@ -59,8 +57,6 @@ func (c *Client) CreateLocalSCVSource(payload DestinationLocalCSV) (DestinationL
 
 func (c *Client) ReadLocalCSVDestination(sourceId string) (DestinationLocalCSV, error) {
 	// logger := fwhelpers.GetLogger()
-
-	fmt.Printf("ReadLocalCSVDestination %s\n", sourceId)
 
 	method := "POST"
 	url := c.Host + "/api/v1/destinations/get"

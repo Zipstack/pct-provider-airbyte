@@ -16,19 +16,19 @@ type destinationLocalCSVResource struct {
 }
 
 type destinationLocalCSVResourceModel struct {
-	Name                    string                             `cty:"name"`
-	DestinationId           string                             `cty:"destination_id"`
-	DestinationDefinitionId string                             `cty:"destination_definition_id"`
-	WorkspaceId             string                             `cty:"workspace_id"`
-	ConnectionConfiguration destinationLocalCSVConnConfigModel `cty:"connection_configuration"`
+	Name                    string                             `pctsdk:"name"`
+	DestinationId           string                             `pctsdk:"destination_id"`
+	DestinationDefinitionId string                             `pctsdk:"destination_definition_id"`
+	WorkspaceId             string                             `pctsdk:"workspace_id"`
+	ConnectionConfiguration destinationLocalCSVConnConfigModel `pctsdk:"connection_configuration"`
 }
 type destinationLocalCSVConnConfigModel struct {
-	DestinationPath string                          `cty:"destination_path"`
-	DelimiterType   destinationDelimiterConfigModel `cty:"delimiter_type"`
+	DestinationPath string                          `pctsdk:"destination_path"`
+	DelimiterType   destinationDelimiterConfigModel `pctsdk:"delimiter_type"`
 }
 
 type destinationDelimiterConfigModel struct {
-	Delimiter string `cty:"delimiter"`
+	Delimiter string `pctsdk:"delimiter"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -37,7 +37,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewdestinationLocalCSVResource() schema.ResourceService {
+func NewDestinationLocalCSVResource() schema.ResourceService {
 	return &destinationLocalCSVResource{}
 }
 
@@ -45,7 +45,7 @@ func NewdestinationLocalCSVResource() schema.ResourceService {
 // It is always provider name + "_" + resource type name.
 func (r *destinationLocalCSVResource) Metadata(req *schema.ServiceRequest) *schema.ServiceResponse {
 	return &schema.ServiceResponse{
-		TypeName: req.TypeName + "_destination_localCSV",
+		TypeName: req.TypeName + "_destination_localcsv",
 	}
 }
 
@@ -76,7 +76,7 @@ func (r *destinationLocalCSVResource) Configure(req *schema.ServiceRequest) *sch
 // Schema defines the schema for the resource.
 func (r *destinationLocalCSVResource) Schema() *schema.ServiceResponse {
 	s := &schema.Schema{
-		Description: "Source localCSV resource for Airbyte",
+		Description: "Destination local CSV resource for Airbyte",
 		Attributes: map[string]schema.Attribute{
 			"name": &schema.StringAttribute{
 				Description: "Name",
@@ -152,7 +152,7 @@ func (r *destinationLocalCSVResource) Create(req *schema.ServiceRequest) *schema
 	body.ConnectionConfiguration.DelimiterType.Delimiter = plan.ConnectionConfiguration.DelimiterType.Delimiter
 
 	// Create new source
-	destination, err := r.Client.CreateLocalSCVSource(body)
+	destination, err := r.Client.CreateLocalCSVDestination(body)
 	if err != nil {
 		return schema.ErrorResponse(err)
 	}
@@ -174,7 +174,6 @@ func (r *destinationLocalCSVResource) Create(req *schema.ServiceRequest) *schema
 	if err != nil {
 		return schema.ErrorResponse(err)
 	}
-	fmt.Printf("response here %#v\n", destination)
 	return &schema.ServiceResponse{
 		StateID:          state.DestinationId,
 		StateContents:    stateEnc,

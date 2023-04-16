@@ -16,21 +16,21 @@ type sourcePipedriveResource struct {
 }
 
 type sourcePipedriveResourceModel struct {
-	Name                    string                         `cty:"name"`
-	SourceId                string                         `cty:"source_id"`
-	SourceDefinitionId      string                         `cty:"source_definition_id"`
-	WorkspaceId             string                         `cty:"workspace_id"`
-	ConnectionConfiguration sourcePipedriveConnConfigModel `cty:"connection_configuration"`
+	Name                    string                         `pctsdk:"name"`
+	SourceId                string                         `pctsdk:"source_id"`
+	SourceDefinitionId      string                         `pctsdk:"source_definition_id"`
+	WorkspaceId             string                         `pctsdk:"workspace_id"`
+	ConnectionConfiguration sourcePipedriveConnConfigModel `pctsdk:"connection_configuration"`
 }
 
 type sourcePipedriveConnConfigModel struct {
-	ReplicationStartDate string                         `cty:"replication_start_date"`
-	Authorization        sourcePipedriveAuthConfigModel `cty:"authorization"`
+	ReplicationStartDate string                         `pctsdk:"replication_start_date"`
+	Authorization        sourcePipedriveAuthConfigModel `pctsdk:"authorization"`
 }
 
 type sourcePipedriveAuthConfigModel struct {
-	AuthType string `cty:"auth_type"`
-	ApiToken string `cty:"api_token"`
+	AuthType string `pctsdk:"auth_type"`
+	ApiToken string `pctsdk:"api_token"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -39,7 +39,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewsourcePipedriveResource() schema.ResourceService {
+func NewSourcePipedriveResource() schema.ResourceService {
 	return &sourcePipedriveResource{}
 }
 
@@ -100,7 +100,6 @@ func (r *sourcePipedriveResource) Schema() *schema.ServiceResponse {
 			"connection_configuration": &schema.MapAttribute{
 				Description: "Connection configuration",
 				Required:    true,
-				//Sensitive:   true,
 				Attributes: map[string]schema.Attribute{
 					"replication_start_date": &schema.StringAttribute{
 						Description: "Replication Start Date",
@@ -183,7 +182,7 @@ func (r *sourcePipedriveResource) Create(req *schema.ServiceRequest) *schema.Ser
 	if err != nil {
 		return schema.ErrorResponse(err)
 	}
-	fmt.Printf("response here %#v\n", source)
+
 	return &schema.ServiceResponse{
 		StateID:          state.SourceId,
 		StateContents:    stateEnc,
@@ -228,6 +227,7 @@ func (r *sourcePipedriveResource) Read(req *schema.ServiceRequest) *schema.Servi
 	} else {
 		// No previous state exists.
 		res.StateID = ""
+		res.StateLastUpdated = ""
 	}
 
 	// Set refreshed state
