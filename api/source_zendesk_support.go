@@ -18,12 +18,13 @@ type SourceZendeskSupport struct {
 }
 
 type SourceZendeskSupportConnConfig struct {
-	StartDate        string                        `json:"start_date"`
-	Subdomain        string                        `json:"subdomain,omitempty"`
-	IgnorePagination bool                          `json:"ignore_pagination"`
-	Credentials      ZendeskSupportCredConfigModel `json:"credentials"`
+	StartDate        string                              `json:"start_date"`
+	Subdomain        string                              `json:"subdomain,omitempty"`
+	IgnorePagination bool                                `json:"ignore_pagination"`
+	Credentials      SourceZendeskSupportCredConfigModel `json:"credentials"`
 }
-type ZendeskSupportCredConfigModel struct {
+
+type SourceZendeskSupportCredConfigModel struct {
 	Credentials string `json:"credentials"`
 	ApiToken    string `json:"api_token,omitempty"`
 	Email       string `json:"email,omitempty"`

@@ -179,7 +179,7 @@ func (r *sourceZendeskSupportResource) Create(req *schema.ServiceRequest) *schem
 	body.ConnectionConfiguration.StartDate = plan.ConnectionConfiguration.StartDate
 	body.ConnectionConfiguration.IgnorePagination = plan.ConnectionConfiguration.IgnorePagination
 	body.ConnectionConfiguration.Subdomain = plan.ConnectionConfiguration.Subdomain
-	body.ConnectionConfiguration.Credentials = api.ZendeskSupportCredConfigModel{}
+	body.ConnectionConfiguration.Credentials = api.SourceZendeskSupportCredConfigModel{}
 	body.ConnectionConfiguration.Credentials.Credentials = plan.ConnectionConfiguration.Credentials.Credentials
 	body.ConnectionConfiguration.Credentials.ApiToken = plan.ConnectionConfiguration.Credentials.ApiToken
 	body.ConnectionConfiguration.Credentials.Email = plan.ConnectionConfiguration.Credentials.Email
@@ -201,7 +201,7 @@ func (r *sourceZendeskSupportResource) Create(req *schema.ServiceRequest) *schem
 	state.ConnectionConfiguration.StartDate = source.ConnectionConfiguration.StartDate
 	state.ConnectionConfiguration.IgnorePagination = source.ConnectionConfiguration.IgnorePagination
 	state.ConnectionConfiguration.Subdomain = source.ConnectionConfiguration.Subdomain
-	state.ConnectionConfiguration.Credentials = ZendeskSupportCredConfigModel{}
+	state.ConnectionConfiguration.Credentials = sourceZendeskSupportCredConfigModel{}
 	state.ConnectionConfiguration.Credentials.Credentials = source.ConnectionConfiguration.Credentials.Credentials
 	state.ConnectionConfiguration.Credentials.ApiToken = source.ConnectionConfiguration.Credentials.ApiToken
 	state.ConnectionConfiguration.Credentials.Email = source.ConnectionConfiguration.Credentials.Email
@@ -251,7 +251,7 @@ func (r *sourceZendeskSupportResource) Read(req *schema.ServiceRequest) *schema.
 		state.ConnectionConfiguration.StartDate = source.ConnectionConfiguration.StartDate
 		state.ConnectionConfiguration.IgnorePagination = source.ConnectionConfiguration.IgnorePagination
 		state.ConnectionConfiguration.Subdomain = source.ConnectionConfiguration.Subdomain
-		state.ConnectionConfiguration.Credentials = ZendeskSupportCredConfigModel{}
+		state.ConnectionConfiguration.Credentials = sourceZendeskSupportCredConfigModel{}
 		state.ConnectionConfiguration.Credentials.Credentials = source.ConnectionConfiguration.Credentials.Credentials
 		state.ConnectionConfiguration.Credentials.ApiToken = source.ConnectionConfiguration.Credentials.ApiToken
 		state.ConnectionConfiguration.Credentials.Email = source.ConnectionConfiguration.Credentials.Email
@@ -292,7 +292,7 @@ func (r *sourceZendeskSupportResource) Update(req *schema.ServiceRequest) *schem
 	body.ConnectionConfiguration.StartDate = plan.ConnectionConfiguration.StartDate
 	body.ConnectionConfiguration.IgnorePagination = plan.ConnectionConfiguration.IgnorePagination
 	body.ConnectionConfiguration.Subdomain = plan.ConnectionConfiguration.Subdomain
-	body.ConnectionConfiguration.Credentials = api.ZendeskSupportCredConfigModel{}
+	body.ConnectionConfiguration.Credentials = api.SourceZendeskSupportCredConfigModel{}
 	body.ConnectionConfiguration.Credentials.Credentials = plan.ConnectionConfiguration.Credentials.Credentials
 	body.ConnectionConfiguration.Credentials.ApiToken = plan.ConnectionConfiguration.Credentials.ApiToken
 	body.ConnectionConfiguration.Credentials.Email = plan.ConnectionConfiguration.Credentials.Email
@@ -320,7 +320,7 @@ func (r *sourceZendeskSupportResource) Update(req *schema.ServiceRequest) *schem
 	state.ConnectionConfiguration.StartDate = source.ConnectionConfiguration.StartDate
 	state.ConnectionConfiguration.IgnorePagination = source.ConnectionConfiguration.IgnorePagination
 	state.ConnectionConfiguration.Subdomain = source.ConnectionConfiguration.Subdomain
-	state.ConnectionConfiguration.Credentials = ZendeskSupportCredConfigModel{}
+	state.ConnectionConfiguration.Credentials = sourceZendeskSupportCredConfigModel{}
 	state.ConnectionConfiguration.Credentials.Credentials = source.ConnectionConfiguration.Credentials.Credentials
 	state.ConnectionConfiguration.Credentials.ApiToken = source.ConnectionConfiguration.Credentials.ApiToken
 	state.ConnectionConfiguration.Credentials.Email = source.ConnectionConfiguration.Credentials.Email
