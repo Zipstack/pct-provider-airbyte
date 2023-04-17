@@ -16,19 +16,19 @@ type sourceStripeResource struct {
 }
 
 type sourceStripeResourceModel struct {
-	Name                    string                      `cty:"name"`
-	SourceId                string                      `cty:"source_id"`
-	SourceDefinitionId      string                      `cty:"source_definition_id"`
-	WorkspaceId             string                      `cty:"workspace_id"`
-	ConnectionConfiguration sourceStripeConnConfigModel `cty:"connection_configuration"`
+	Name                    string                      `pctsdk:"name"`
+	SourceId                string                      `pctsdk:"source_id"`
+	SourceDefinitionId      string                      `pctsdk:"source_definition_id"`
+	WorkspaceId             string                      `pctsdk:"workspace_id"`
+	ConnectionConfiguration sourceStripeConnConfigModel `pctsdk:"connection_configuration"`
 }
 
 type sourceStripeConnConfigModel struct {
-	StartDate          string `cty:"start_date"`
-	LookbackWindowDays int    `cty:"lookback_window_days"`
-	SliceRange         int    `cty:"slice_range"`
-	ClientSecret       string `cty:"client_secret"`
-	AccountId          string `cty:"account_id"`
+	StartDate          string `pctsdk:"start_date"`
+	LookbackWindowDays int    `pctsdk:"lookback_window_days"`
+	SliceRange         int    `pctsdk:"slice_range"`
+	ClientSecret       string `pctsdk:"client_secret"`
+	AccountId          string `pctsdk:"account_id"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -37,7 +37,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewsourceStripeResource() schema.ResourceService {
+func NewSourceStripeResource() schema.ResourceService {
 	return &sourceStripeResource{}
 }
 

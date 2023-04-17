@@ -16,25 +16,25 @@ type sourceZendeskSupportResource struct {
 }
 
 type sourceZendeskSupportResourceModel struct {
-	Name                    string                              `cty:"name"`
-	SourceId                string                              `cty:"source_id"`
-	SourceDefinitionId      string                              `cty:"source_definition_id"`
-	WorkspaceId             string                              `cty:"workspace_id"`
-	ConnectionConfiguration sourceZendeskSupportConnConfigModel `cty:"connection_configuration"`
+	Name                    string                              `pctsdk:"name"`
+	SourceId                string                              `pctsdk:"source_id"`
+	SourceDefinitionId      string                              `pctsdk:"source_definition_id"`
+	WorkspaceId             string                              `pctsdk:"workspace_id"`
+	ConnectionConfiguration sourceZendeskSupportConnConfigModel `pctsdk:"connection_configuration"`
 }
 
 type sourceZendeskSupportConnConfigModel struct {
-	StartDate        string                        `cty:"start_date"`
-	Subdomain        string                        `cty:"subdomain"`
-	IgnorePagination bool                          `cty:"ignore_pagination"`
-	Credentials      ZendeskSupportCredConfigModel `cty:"credentials"`
+	StartDate        string                              `pctsdk:"start_date"`
+	Subdomain        string                              `pctsdk:"subdomain"`
+	IgnorePagination bool                                `pctsdk:"ignore_pagination"`
+	Credentials      sourceZendeskSupportCredConfigModel `pctsdk:"credentials"`
 }
 
-type ZendeskSupportCredConfigModel struct {
-	Credentials string `cty:"credentials"`
-	ApiToken    string `cty:"api_token"`
-	Email       string `cty:"email"`
-	AccessToken string `cty:"access_token"`
+type sourceZendeskSupportCredConfigModel struct {
+	Credentials string `pctsdk:"credentials"`
+	ApiToken    string `pctsdk:"api_token"`
+	Email       string `pctsdk:"email"`
+	AccessToken string `pctsdk:"access_token"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -43,7 +43,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewsourceZendeskSupportResource() schema.ResourceService {
+func NewSourceZendeskSupportResource() schema.ResourceService {
 	return &sourceZendeskSupportResource{}
 }
 

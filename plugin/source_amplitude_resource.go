@@ -16,18 +16,18 @@ type sourceAmplitudeResource struct {
 }
 
 type sourceAmplitudeResourceModel struct {
-	Name                    string                         `cty:"name"`
-	SourceId                string                         `cty:"source_id"`
-	SourceDefinitionId      string                         `cty:"source_definition_id"`
-	WorkspaceId             string                         `cty:"workspace_id"`
-	ConnectionConfiguration sourceAmplitudeConnConfigModel `cty:"connection_configuration"`
+	Name                    string                         `pctsdk:"name"`
+	SourceId                string                         `pctsdk:"source_id"`
+	SourceDefinitionId      string                         `pctsdk:"source_definition_id"`
+	WorkspaceId             string                         `pctsdk:"workspace_id"`
+	ConnectionConfiguration sourceAmplitudeConnConfigModel `pctsdk:"connection_configuration"`
 }
 
 type sourceAmplitudeConnConfigModel struct {
-	StartDate  string `cty:"start_date"`
-	DataRegion string `cty:"data_region"`
-	SecretKey  string `cty:"secret_key"`
-	ApiKey     string `cty:"api_key"`
+	StartDate  string `pctsdk:"start_date"`
+	DataRegion string `pctsdk:"data_region"`
+	SecretKey  string `pctsdk:"secret_key"`
+	ApiKey     string `pctsdk:"api_key"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -36,7 +36,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewsourceAmplitudeResource() schema.ResourceService {
+func NewSourceAmplitudeResource() schema.ResourceService {
 	return &sourceAmplitudeResource{}
 }
 

@@ -16,18 +16,18 @@ type sourceFreshdeskResource struct {
 }
 
 type sourceFreshdeskResourceModel struct {
-	Name                    string                         `cty:"name"`
-	SourceId                string                         `cty:"source_id"`
-	SourceDefinitionId      string                         `cty:"source_definition_id"`
-	WorkspaceId             string                         `cty:"workspace_id"`
-	ConnectionConfiguration sourceFreshdeskConnConfigModel `cty:"connection_configuration"`
+	Name                    string                         `pctsdk:"name"`
+	SourceId                string                         `pctsdk:"source_id"`
+	SourceDefinitionId      string                         `pctsdk:"source_definition_id"`
+	WorkspaceId             string                         `pctsdk:"workspace_id"`
+	ConnectionConfiguration sourceFreshdeskConnConfigModel `pctsdk:"connection_configuration"`
 }
 
 type sourceFreshdeskConnConfigModel struct {
-	Domain            string `cty:"domain"`
-	StartDate         string `cty:"start_date"`
-	ApiKey            string `cty:"api_key"`
-	RequestsPerMinute int    `cty:"requests_per_minute"`
+	Domain            string `pctsdk:"domain"`
+	StartDate         string `pctsdk:"start_date"`
+	ApiKey            string `pctsdk:"api_key"`
+	RequestsPerMinute int    `pctsdk:"requests_per_minute"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -36,7 +36,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewsourceFreshdeskResource() schema.ResourceService {
+func NewSourceFreshdeskResource() schema.ResourceService {
 	return &sourceFreshdeskResource{}
 }
 

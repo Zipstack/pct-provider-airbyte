@@ -16,26 +16,25 @@ type sourceShopifyResource struct {
 }
 
 type sourceShopifyResourceModel struct {
-	Name                    string                       `cty:"name"`
-	SourceId                string                       `cty:"source_id"`
-	SourceDefinitionId      string                       `cty:"source_definition_id"`
-	WorkspaceId             string                       `cty:"workspace_id"`
-	ConnectionConfiguration sourceShopifyConnConfigModel `cty:"connection_configuration"`
+	Name                    string                       `pctsdk:"name"`
+	SourceId                string                       `pctsdk:"source_id"`
+	SourceDefinitionId      string                       `pctsdk:"source_definition_id"`
+	WorkspaceId             string                       `pctsdk:"workspace_id"`
+	ConnectionConfiguration sourceShopifyConnConfigModel `pctsdk:"connection_configuration"`
 }
 
 type sourceShopifyConnConfigModel struct {
-	StartDate string `cty:"start_date"`
-	Shop      string `cty:"shop"`
-
-	Credentials shopifyCredConfigModel `cty:"credentials"`
+	StartDate   string                 `pctsdk:"start_date"`
+	Shop        string                 `pctsdk:"shop"`
+	Credentials shopifyCredConfigModel `pctsdk:"credentials"`
 }
 
 type shopifyCredConfigModel struct {
-	AuthMethod   string `cty:"auth_method"`
-	ApiPassword  string `cty:"api_password"`
-	ClientSecret string `cty:"client_secret"`
-	AccessToken  string `cty:"access_token"`
-	ClientId     string `cty:"client_id"`
+	AuthMethod   string `pctsdk:"auth_method"`
+	ApiPassword  string `pctsdk:"api_password"`
+	ClientSecret string `pctsdk:"client_secret"`
+	AccessToken  string `pctsdk:"access_token"`
+	ClientId     string `pctsdk:"client_id"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -44,7 +43,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewsourceShopifyResource() schema.ResourceService {
+func NewSourceShopifyResource() schema.ResourceService {
 	return &sourceShopifyResource{}
 }
 

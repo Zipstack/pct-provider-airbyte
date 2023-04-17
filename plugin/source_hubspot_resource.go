@@ -16,24 +16,24 @@ type sourceHubspotResource struct {
 }
 
 type sourceHubspotResourceModel struct {
-	Name                    string                       `cty:"name"`
-	SourceId                string                       `cty:"source_id"`
-	SourceDefinitionId      string                       `cty:"source_definition_id"`
-	WorkspaceId             string                       `cty:"workspace_id"`
-	ConnectionConfiguration sourceHubspotConnConfigModel `cty:"connection_configuration"`
+	Name                    string                       `pctsdk:"name"`
+	SourceId                string                       `pctsdk:"source_id"`
+	SourceDefinitionId      string                       `pctsdk:"source_definition_id"`
+	WorkspaceId             string                       `pctsdk:"workspace_id"`
+	ConnectionConfiguration sourceHubspotConnConfigModel `pctsdk:"connection_configuration"`
 }
 
 type sourceHubspotConnConfigModel struct {
-	StartDate   string                 `cty:"start_date"`
-	Credentials HubspotCredConfigModel `cty:"credentials"`
+	StartDate   string                 `pctsdk:"start_date"`
+	Credentials HubspotCredConfigModel `pctsdk:"credentials"`
 }
 
 type HubspotCredConfigModel struct {
-	CredentialsTitle string `cty:"credentials_title"`
-	RefreshToken     string `cty:"refresh_token"`
-	AccessToken      string `cty:"access_token"`
-	ClientSecret     string `cty:"client_secret"`
-	ClientId         string `cty:"client_id"`
+	CredentialsTitle string `pctsdk:"credentials_title"`
+	RefreshToken     string `pctsdk:"refresh_token"`
+	AccessToken      string `pctsdk:"access_token"`
+	ClientSecret     string `pctsdk:"client_secret"`
+	ClientId         string `pctsdk:"client_id"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -42,7 +42,7 @@ var (
 )
 
 // Helper function to return a resource service instance.
-func NewsourceHubspotResource() schema.ResourceService {
+func NewSourceHubspotResource() schema.ResourceService {
 	return &sourceHubspotResource{}
 }
 
