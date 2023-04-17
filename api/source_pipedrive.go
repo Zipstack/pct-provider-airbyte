@@ -5,41 +5,44 @@ import (
 	"fmt"
 )
 
-type SourceFakerID struct {
+type SourcePipedriveID struct {
 	SourceId string `json:"sourceId"`
 }
 
-type SourceFaker struct {
-	Name                    string                `json:"name"`
-	SourceDefinitionId      string                `json:"sourceDefinitionId,omitempty"`
-	SourceId                string                `json:"sourceId,omitempty"`
-	WorkspaceId             string                `json:"workspaceId,omitempty"`
-	ConnectionConfiguration SourceFakerConnConfig `json:"connectionConfiguration"`
+type SourcePipedrive struct {
+	Name                    string                    `json:"name"`
+	SourceId                string                    `json:"sourceId,omitempty"`
+	SourceDefinitionId      string                    `json:"sourceDefinitionId,omitempty"`
+	WorkspaceId             string                    `json:"workspaceId,omitempty"`
+	ConnectionConfiguration SourcePipedriveConnConfig `json:"connectionConfiguration"`
 }
 
-type SourceFakerConnConfig struct {
-	Seed            int64 `json:"seed"`
-	Count           int64 `json:"count"`
-	RecordsPerSync  int64 `json:"records_per_sync"`
-	RecordsPerSlice int64 `json:"records_per_slice"`
+type SourcePipedriveConnConfig struct {
+	ReplicationStartDate string                         `json:"replication_start_date"`
+	Authorization        SourcePipedriveAuthConfigModel `json:"authorization"`
 }
 
-func (c *Client) CreateSource(payload SourceFaker) (SourceFaker, error) {
+type SourcePipedriveAuthConfigModel struct {
+	AuthType string `json:"auth_type"`
+	ApiToken string `json:"api_token"`
+}
+
+func (c *Client) CreatePipedriveSource(payload SourcePipedrive) (SourcePipedrive, error) {
 	// logger := fwhelpers.GetLogger()
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/create"
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return SourceFaker{}, err
+		return SourcePipedrive{}, err
 	}
 
 	b, statusCode, _, _, err := c.doRequest(method, url, body, nil)
 	if err != nil {
-		return SourceFaker{}, err
+		return SourcePipedrive{}, err
 	}
 
-	source := SourceFaker{}
+	source := SourcePipedrive{}
 	if statusCode >= 200 && statusCode <= 299 {
 		err = json.Unmarshal(b, &source)
 		return source, err
@@ -53,23 +56,23 @@ func (c *Client) CreateSource(payload SourceFaker) (SourceFaker, error) {
 	}
 }
 
-func (c *Client) ReadSource(sourceId string) (SourceFaker, error) {
+func (c *Client) ReadPipedriveSource(sourceId string) (SourcePipedrive, error) {
 	// logger := fwhelpers.GetLogger()
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/get"
-	sId := SourceFakerID{sourceId}
+	sId := SourcePipedriveID{sourceId}
 	body, err := json.Marshal(sId)
 	if err != nil {
-		return SourceFaker{}, err
+		return SourcePipedrive{}, err
 	}
 
 	b, statusCode, _, _, err := c.doRequest(method, url, body, nil)
 	if err != nil {
-		return SourceFaker{}, err
+		return SourcePipedrive{}, err
 	}
 
-	source := SourceFaker{}
+	source := SourcePipedrive{}
 	if statusCode >= 200 && statusCode <= 299 {
 		err = json.Unmarshal(b, &source)
 		return source, err
@@ -83,22 +86,22 @@ func (c *Client) ReadSource(sourceId string) (SourceFaker, error) {
 	}
 }
 
-func (c *Client) UpdateSource(payload SourceFaker) (SourceFaker, error) {
+func (c *Client) UpdatePipedriveSource(payload SourcePipedrive) (SourcePipedrive, error) {
 	// logger := fwhelpers.GetLogger()
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/update"
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return SourceFaker{}, err
+		return SourcePipedrive{}, err
 	}
 
 	b, statusCode, _, _, err := c.doRequest(method, url, body, nil)
 	if err != nil {
-		return SourceFaker{}, err
+		return SourcePipedrive{}, err
 	}
 
-	source := SourceFaker{}
+	source := SourcePipedrive{}
 	if statusCode >= 200 && statusCode <= 299 {
 		err = json.Unmarshal(b, &source)
 		return source, err
@@ -112,12 +115,12 @@ func (c *Client) UpdateSource(payload SourceFaker) (SourceFaker, error) {
 	}
 }
 
-func (c *Client) DeleteSource(sourceId string) error {
+func (c *Client) DeletePipedriveSource(sourceId string) error {
 	// logger := fwhelpers.GetLogger()
 
 	method := "POST"
 	url := c.Host + "/api/v1/sources/delete"
-	sId := SourceFakerID{sourceId}
+	sId := SourcePipedriveID{sourceId}
 	body, err := json.Marshal(sId)
 	if err != nil {
 		return err

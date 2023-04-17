@@ -17,9 +17,9 @@ type Provider struct {
 
 // Model maps the provider state as per schema.
 type ProviderModel struct {
-	Host     string `cty:"host"`
-	Username string `cty:"username"`
-	Password string `cty:"password"`
+	Host     string `pctsdk:"host"`
+	Username string `pctsdk:"username"`
+	Password string `pctsdk:"password"`
 }
 
 // Ensure the implementation satisfies the expected interfaces
@@ -35,7 +35,7 @@ func NewProvider() schema.ProviderService {
 // Metadata returns the provider type name.
 func (p *Provider) Metadata(req *schema.ServiceRequest) *schema.ServiceResponse {
 	return &schema.ServiceResponse{
-		TypeName: "airbyte",
+		TypeName: "airbyte_local",
 	}
 }
 

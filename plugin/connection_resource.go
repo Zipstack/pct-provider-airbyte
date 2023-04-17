@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/zipstack/pct-plugin-framework/fwhelpers"
 	"github.com/zipstack/pct-plugin-framework/schema"
@@ -9,68 +10,64 @@ import (
 	"github.com/zipstack/pct-provider-airbyte/api"
 )
 
-// Resource implementation.
 type connectionResource struct {
 	Client *api.Client
 }
 
 type connectionResourceModel struct {
-	Name                  string             `json:"name"`
-	SourceID              string             `json:"sourceId"`
-	DestinationID         string             `json:"destinationId"`
-	ConnectionID          string             `json:"connectionId"`
-	NamespaceDefinition   string             `json:"namespace_definition"`
-	NamespaceFormat       string             `json:"namespace_format"`
-	Status                string             `json:"status"`
-	Prefix                string             `json:"prefix"`
-	ScheduleType          string             `json:"schedule_type"`
-	ScheduleData          connScheduleData   `json:"schedule_data"`
-	OperatorConfiguration connOperatorConfig `json:"operator_configuration"`
+	Name          string           `pctsdk:"name"`
+	SourceID      string           `pctsdk:"source_id"`
+	DestinationID string           `pctsdk:"destination_id"`
+	ConnectionID  string           `pctsdk:"connection_id"`
+	Status        string           `pctsdk:"status"`
+	ScheduleType  string           `pctsdk:"schedule_type"`
+	ScheduleData  connScheduleData `pctsdk:"schedule_data"`
+	// OperatorConfiguration connOperatorConfig `pctsdk:"operator_configuration"`
 }
 
 type connScheduleData struct {
-	BasicSchedule connScheduleDataBasicSchedule `json:"basic_schedule"`
-	Cron          connScheduleDataCron          `json:"cron"`
+	BasicSchedule connScheduleDataBasicSchedule `pctsdk:"basic_schedule,omitempty"`
+	Cron          connScheduleDataCron          `pctsdk:"cron,omitempty"`
 }
 
 type connScheduleDataBasicSchedule struct {
-	TimeUnit string `json:"time_unit"`
-	Units    int64  `json:"units"`
+	TimeUnit string `pctsdk:"time_unit"`
+	Units    int64  `pctsdk:"units"`
 }
 
 type connScheduleDataCron struct {
-	CronExpression string `json:"cron_expression"`
-	CronTimeZone   string `json:"cron_time_zone"`
+	CronExpression string `pctsdk:"cron_expression"`
+	CronTimeZone   string `pctsdk:"cron_time_zone"`
 }
 
-type connOperatorConfig struct {
-	OperatorType  string                          `json:"operator_type"`
-	Normalization connOperatorConfigNormalization `json:"normalization"`
-	Dbt           connOperatorConfigDbt           `json:"dbt"`
-	Webhook       connOperatorConfigWebhook       `json:"webhook"`
-}
+// type connOperatorConfig struct {
+// 	OperatorType  string                          `pctsdk:"operator_type"`
+// 	Normalization connOperatorConfigNormalization `pctsdk:"normalization"`
+// 	Dbt           connOperatorConfigDbt           `pctsdk:"dbt"`
+// 	Webhook       connOperatorConfigWebhook       `pctsdk:"webhook"`
+// }
 
-type connOperatorConfigNormalization struct {
-	Option string `json:"option"`
-}
+// type connOperatorConfigNormalization struct {
+// 	Option string `cty:"option"`
+// }
 
-type connOperatorConfigDbt struct {
-	GitRepoUrl    string `json:"git_repo_url"`
-	GitRepoBranch string `json:"git_repo_branch"`
-	DockerImage   string `json:"docker_image"`
-	DbtArguments  string `json:"dbt_arguments"`
-}
+// type connOperatorConfigDbt struct {
+// 	GitRepoUrl    string `pctsdk:"git_repo_url"`
+// 	GitRepoBranch string `pctsdk:"git_repo_branch"`
+// 	DockerImage   string `pctsdk:"docker_image"`
+// 	DbtArguments  string `pctsdk:"dbt_arguments"`
+// }
 
-type connOperatorConfigWebhook struct {
-	WebhookConfigId string                            `json:"webhook_config_id"`
-	WebhookType     string                            `json:"webhook_type"`
-	DbtCloud        connOperatorConfigWebhookDbtCloud `json:"dbt_cloud"`
-}
+// type connOperatorConfigWebhook struct {
+// 	WebhookConfigId string                            `pctsdk:"webhook_config_id"`
+// 	WebhookType     string                            `pctsdk:"webhook_type"`
+// 	DbtCloud        connOperatorConfigWebhookDbtCloud `pctsdk:"dbt_cloud"`
+// }
 
-type connOperatorConfigWebhookDbtCloud struct {
-	AccountId int64 `json:"account_id"`
-	JobId     int64 `json:"job_id"`
-}
+// type connOperatorConfigWebhookDbtCloud struct {
+// 	AccountId int64 `pctsdk:"account_id"`
+// 	JobId     int64 `pctsdk:"job_id"`
+// }
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
@@ -96,10 +93,17 @@ func (r *connectionResource) Configure(req *schema.ServiceRequest) *schema.Servi
 		return schema.ErrorResponse(fmt.Errorf("no data provided to configure resource"))
 	}
 
-	var client *api.Client
-	err := fwhelpers.Decode(req.ResourceData, &client)
+	var creds map[string]string
+	err := fwhelpers.Decode(req.ResourceData, &creds)
 	if err != nil {
 		return schema.ErrorResponse(err)
+	}
+
+	client, err := api.NewClient(
+		creds["host"], creds["username"], creds["password"],
+	)
+	if err != nil {
+		return schema.ErrorResponse(fmt.Errorf("malformed data provided to configure resource"))
 	}
 
 	r.Client = client
@@ -118,42 +122,28 @@ func (r *connectionResource) Schema() *schema.ServiceResponse {
 			},
 			"source_id": &schema.StringAttribute{
 				Description: "Source ID",
-				Required:    false,
-				Computed:    true,
+				Required:    true,
 			},
 			"destination_id": &schema.StringAttribute{
 				Description: "Destination ID",
-				Required:    false,
-				Computed:    true,
+				Required:    true,
 			},
 			"connection_id": &schema.StringAttribute{
 				Description: "Connection ID",
-				Required:    false,
 				Computed:    true,
-			},
-			"namespace_definition": &schema.StringAttribute{
-				Description: "Namespace definition",
-				Required:    false,
-			},
-			"namespace_format": &schema.StringAttribute{
-				Description: "Namespace format",
-				Required:    false,
 			},
 			"status": &schema.StringAttribute{
 				Description: "Status",
 				Required:    true,
-			},
-			"prefix": &schema.StringAttribute{
-				Description: "Prefix",
-				Required:    false,
 			},
 			"schedule_type": &schema.StringAttribute{
 				Description: "Schedule type",
 				Required:    true,
 			},
 			"schedule_data": &schema.MapAttribute{
-				Description: "Schedule data",
-				Required:    true,
+				Description:  "Schedule data",
+				Required:     true,
+				ExactlyOneOf: []string{"basic_schedule", "cron"},
 				Attributes: map[string]schema.Attribute{
 					"basic_schedule": &schema.MapAttribute{
 						Description: "Basic schedule",
@@ -185,76 +175,76 @@ func (r *connectionResource) Schema() *schema.ServiceResponse {
 					},
 				},
 			},
-			"operator_configuration": &schema.MapAttribute{
-				Description: "Operator configuration",
-				Required:    false,
-				Attributes: map[string]schema.Attribute{
-					"operator_type": &schema.StringAttribute{
-						Description: "Operator type",
-						Required:    false,
-					},
-					"normalization": &schema.MapAttribute{
-						Description: "Basic schedule",
-						Required:    false,
-						Attributes: map[string]schema.Attribute{
-							"option": &schema.StringAttribute{
-								Description: "Option",
-								Required:    false,
-							},
-						},
-					},
-					"dbt": &schema.MapAttribute{
-						Description: "DBT",
-						Required:    false,
-						Attributes: map[string]schema.Attribute{
-							"dbt_arguments": &schema.StringAttribute{
-								Description: "DBT arguments",
-								Required:    false,
-							},
-							"docker_image": &schema.StringAttribute{
-								Description: "Docker image",
-								Required:    false,
-							},
-							"git_repo_branch": &schema.StringAttribute{
-								Description: "Git repo branch",
-								Required:    false,
-							},
-							"git_repo_url": &schema.StringAttribute{
-								Description: "Git repo url",
-								Required:    false,
-							},
-						},
-					},
-					"webhook": &schema.MapAttribute{
-						Description: "Webhook",
-						Required:    false,
-						Attributes: map[string]schema.Attribute{
-							"webhook_config_id": &schema.StringAttribute{
-								Description: "Webhook config ID",
-								Required:    false,
-							},
-							"webhook_type": &schema.StringAttribute{
-								Description: "Webhook type",
-								Required:    false,
-							},
-							"dbt_cloud": &schema.MapAttribute{
-								Description: "DBT cloud",
-								Required:    false,
-								Attributes: map[string]schema.Attribute{
-									"account_id": &schema.IntAttribute{
-										Description: "Account ID",
-										Required:    false,
-									},
-									"job_id": &schema.IntAttribute{
-										Description: "Job ID",
-										Required:    false,
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+			// "operator_configuration": &schema.MapAttribute{
+			// 	Description: "Operator configuration",
+			// 	Required:    false,
+			// 	Attributes: map[string]schema.Attribute{
+			// 		"operator_type": &schema.StringAttribute{
+			// 			Description: "Operator type",
+			// 			Required:    false,
+			// 		},
+			// 		"normalization": &schema.MapAttribute{
+			// 			Description: "Basic schedule",
+			// 			Required:    false,
+			// 			Attributes: map[string]schema.Attribute{
+			// 				"option": &schema.StringAttribute{
+			// 					Description: "Option",
+			// 					Required:    false,
+			// 				},
+			// 			},
+			// 		},
+			// 		"dbt": &schema.MapAttribute{
+			// 			Description: "DBT",
+			// 			Required:    false,
+			// 			Attributes: map[string]schema.Attribute{
+			// 				"dbt_arguments": &schema.StringAttribute{
+			// 					Description: "DBT arguments",
+			// 					Required:    false,
+			// 				},
+			// 				"docker_image": &schema.StringAttribute{
+			// 					Description: "Docker image",
+			// 					Required:    false,
+			// 				},
+			// 				"git_repo_branch": &schema.StringAttribute{
+			// 					Description: "Git repo branch",
+			// 					Required:    false,
+			// 				},
+			// 				"git_repo_url": &schema.StringAttribute{
+			// 					Description: "Git repo url",
+			// 					Required:    false,
+			// 				},
+			// 			},
+			// 		},
+			// 		"webhook": &schema.MapAttribute{
+			// 			Description: "Webhook",
+			// 			Required:    false,
+			// 			Attributes: map[string]schema.Attribute{
+			// 				"webhook_config_id": &schema.StringAttribute{
+			// 					Description: "Webhook config ID",
+			// 					Required:    false,
+			// 				},
+			// 				"webhook_type": &schema.StringAttribute{
+			// 					Description: "Webhook type",
+			// 					Required:    false,
+			// 				},
+			// 				"dbt_cloud": &schema.MapAttribute{
+			// 					Description: "DBT cloud",
+			// 					Required:    false,
+			// 					Attributes: map[string]schema.Attribute{
+			// 						"account_id": &schema.IntAttribute{
+			// 							Description: "Account ID",
+			// 							Required:    false,
+			// 						},
+			// 						"job_id": &schema.IntAttribute{
+			// 							Description: "Job ID",
+			// 							Required:    false,
+			// 						},
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 	},
+			// },
 		},
 	}
 
@@ -270,131 +260,218 @@ func (r *connectionResource) Schema() *schema.ServiceResponse {
 
 // Create a new resource
 func (r *connectionResource) Create(req *schema.ServiceRequest) *schema.ServiceResponse {
-	return &schema.ServiceResponse{}
-
 	// logger := fwhelpers.GetLogger()
 
-	// var plan sourceResourceModel
-	// err := fwhelpers.UnpackModel(req.PlanContents, &plan)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	var plan connectionResourceModel
+	err := fwhelpers.UnpackModel(req.PlanContents, &plan)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
 
-	// // Generate API request body from plan
-	// // plan??
+	body := api.ConnectionResource{}
+	body.Name = plan.Name
+	body.SourceID = plan.SourceID
+	body.DestinationID = plan.DestinationID
 
-	// // Create new order
-	// source, err := r.Client.CreateSource(plan)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	body.ScheduleType = plan.ScheduleType
+	body.ScheduleData = api.ConnScheduleData{}
 
-	// // Map response body to schema and populate Computed attribute values
-	// state := make(map[string]string)
-	// // plan.ID = types.StringValue(strconv.Itoa(order.ID))
-	// // plan.Items[int]model
-	// // plan.LastUpdated = types.StringValue(time.Now().Format(time.RFC850))
+	if plan.ScheduleType == "basic" {
+		body.ScheduleData.BasicSchedule = api.ConnScheduleDataBasicSchedule{}
+		body.ScheduleData.BasicSchedule.TimeUnit = plan.ScheduleData.BasicSchedule.TimeUnit
+		body.ScheduleData.BasicSchedule.Units = plan.ScheduleData.BasicSchedule.Units
+	} else if plan.ScheduleType == "cron" {
+		body.ScheduleData.Cron = api.ConnScheduleDataCron{}
+		body.ScheduleData.Cron.CronExpression = plan.ScheduleData.Cron.CronExpression
+		body.ScheduleData.Cron.CronTimeZone = plan.ScheduleData.Cron.CronTimeZone
+	}
 
-	// stateEnc, err := fwhelpers.Encode(state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	body.Status = plan.Status
 
-	// return &schema.ServiceResponse{
-	// 	StateContents: stateEnc,
-	// }
+	connection, err := r.Client.CreateConnectionResource(body)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
+	// Map response body to schema and populate Computed attribute values
+	state := connectionResourceModel{}
+
+	state.Name = connection.Name
+	state.ConnectionID = connection.ConnectionID
+	state.SourceID = connection.SourceID
+	state.DestinationID = connection.DestinationID
+
+	state.ScheduleType = connection.ScheduleType
+	state.ScheduleData = connScheduleData{}
+
+	if connection.ScheduleType == "basic" {
+		state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
+		state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
+		state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+	} else if connection.ScheduleType == "cron" {
+		state.ScheduleData.Cron = connScheduleDataCron{}
+		state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
+		state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+	}
+
+	state.Status = connection.Status
+
+	stateEnc, err := fwhelpers.PackModel(nil, &state)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
+	return &schema.ServiceResponse{
+		StateID:          state.ConnectionID,
+		StateContents:    stateEnc,
+		StateLastUpdated: time.Now().Format(time.RFC850),
+	}
 }
 
 // Read resource information
 func (r *connectionResource) Read(req *schema.ServiceRequest) *schema.ServiceResponse {
-	return &schema.ServiceResponse{}
+	var state connectionResourceModel
 
-	// // Get current state
-	// var state sourceResourceModel
-	// err := fwhelpers.UnpackModel(req.StateContents, &state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	// Get current state
+	err := fwhelpers.UnpackModel(req.StateContents, &state)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
 
-	// // Get refreshed source value
-	// source, err := r.Client.GetSource(state.ID)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	res := schema.ServiceResponse{}
 
-	// // Overwrite items with refreshed state
-	// state.Items = []sourceResourceModel{}
-	// // fill state.Items with source
+	if req.StateID != "" {
+		// Query using existing previous state.
+		connection, err := r.Client.ReadConnectionResource(req.StateID)
+		if err != nil {
+			return schema.ErrorResponse(err)
+		}
 
-	// // Set refreshed state
-	// stateEnc, err := fwhelpers.Encode(state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+		state = connectionResourceModel{}
 
-	// return &schema.ServiceResponse{
-	// 	StateContents: stateEnc,
-	// }
+		// Update state with refreshed value
+		state.Name = connection.Name
+		state.ConnectionID = connection.ConnectionID
+		state.SourceID = connection.SourceID
+		state.DestinationID = connection.DestinationID
+
+		state.ScheduleType = connection.ScheduleType
+		state.ScheduleData = connScheduleData{}
+
+		if connection.ScheduleType == "basic" {
+			state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
+			state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
+			state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+		} else if connection.ScheduleType == "cron" {
+			state.ScheduleData.Cron = connScheduleDataCron{}
+			state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
+			state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+		}
+
+		state.Status = connection.Status
+
+		res.StateID = connection.ConnectionID
+	} else {
+		// No previous state exists.
+		res.StateID = ""
+		res.StateLastUpdated = ""
+	}
+
+	// Set refreshed state
+	stateEnc, err := fwhelpers.PackModel(nil, &state)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+	res.StateContents = stateEnc
+
+	return &res
 }
 
 func (r *connectionResource) Update(req *schema.ServiceRequest) *schema.ServiceResponse {
-	return &schema.ServiceResponse{}
+	var plan connectionResourceModel
+	err := fwhelpers.UnpackModel(req.PlanContents, &plan)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
 
-	// // Retrieve values from plan
-	// var plan sourceResourceModel
-	// err := fwhelpers.UnpackModel(req.StateContents, &plan)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	// Generate API request body from plan
+	body := api.ConnectionResource{}
 
-	// // Generate API request body from plan
-	// // plan??
+	body.Name = plan.Name
+	body.ConnectionID = plan.ConnectionID
+	body.SourceID = plan.SourceID
+	body.DestinationID = plan.DestinationID
 
-	// // Update existing source
-	// source, err := r.Client.UpdateSource(plan)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	body.ScheduleType = plan.ScheduleType
+	body.ScheduleData = api.ConnScheduleData{}
 
-	// // Fetch updated items from GetSource as UpdateSource items are not
-	// // populated.
-	// source, err := r.Client.GetSource(state.ID)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	if plan.ScheduleType == "basic" {
+		body.ScheduleData.BasicSchedule = api.ConnScheduleDataBasicSchedule{}
+		body.ScheduleData.BasicSchedule.TimeUnit = plan.ScheduleData.BasicSchedule.TimeUnit
+		body.ScheduleData.BasicSchedule.Units = plan.ScheduleData.BasicSchedule.Units
+	} else if plan.ScheduleType == "cron" {
+		body.ScheduleData.Cron = api.ConnScheduleDataCron{}
+		body.ScheduleData.Cron.CronExpression = plan.ScheduleData.Cron.CronExpression
+		body.ScheduleData.Cron.CronTimeZone = plan.ScheduleData.Cron.CronTimeZone
+	}
 
-	// // Update resource state with updated items and timestamp
-	// state.Items = []sourceResourceModel{}
-	// // fill state.Items with source
-	// // plan.LastUpdated = types.StringValue(time.Now().Format(time.RFC850))
+	body.Status = plan.Status
 
-	// // Set refreshed state
-	// stateEnc, err := fwhelpers.Encode(state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
+	// Update existing source
+	_, err = r.Client.UpdateConnectionResource(body)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
 
-	// return &schema.ServiceResponse{
-	// 	StateContents: stateEnc,
-	// }
+	// Fetch updated items
+	connection, err := r.Client.ReadConnectionResource(req.PlanID)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
+	// Update state with refreshed value
+	state := connectionResourceModel{}
+
+	state.Name = connection.Name
+	state.ConnectionID = connection.ConnectionID
+	state.SourceID = connection.SourceID
+	state.DestinationID = connection.DestinationID
+
+	state.ScheduleType = connection.ScheduleType
+	state.ScheduleData = connScheduleData{}
+
+	if connection.ScheduleType == "basic" {
+		state.ScheduleData.BasicSchedule = connScheduleDataBasicSchedule{}
+		state.ScheduleData.BasicSchedule.TimeUnit = connection.ScheduleData.BasicSchedule.TimeUnit
+		state.ScheduleData.BasicSchedule.Units = connection.ScheduleData.BasicSchedule.Units
+	} else if connection.ScheduleType == "cron" {
+		state.ScheduleData.Cron = connScheduleDataCron{}
+		state.ScheduleData.Cron.CronExpression = connection.ScheduleData.Cron.CronExpression
+		state.ScheduleData.Cron.CronTimeZone = connection.ScheduleData.Cron.CronTimeZone
+	}
+
+	state.Status = connection.Status
+
+	// Set refreshed state
+	stateEnc, err := fwhelpers.PackModel(nil, &state)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
+	return &schema.ServiceResponse{
+		StateID:          state.ConnectionID,
+		StateContents:    stateEnc,
+		StateLastUpdated: time.Now().Format(time.RFC850),
+	}
 }
 
 // Delete deletes the resource and removes the state on success.
 func (r *connectionResource) Delete(req *schema.ServiceRequest) *schema.ServiceResponse {
+	// Delete existing source
+	err := r.Client.DeleteConnectionResource(req.StateID)
+	if err != nil {
+		return schema.ErrorResponse(err)
+	}
+
 	return &schema.ServiceResponse{}
-
-	// // Retrieve values from state
-	// var state sourceResourceModel
-	// err := fwhelpers.UnpackModel(req.StateContents, &state)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
-
-	// // Delete existing source
-	// source, err := r.Client.DeleteSource(state.ID)
-	// if err != nil {
-	// 	return schema.ErrorResponse(err)
-	// }
-
-	// return &schema.ServiceResponse{}
 }
