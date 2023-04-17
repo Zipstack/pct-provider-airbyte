@@ -4,7 +4,7 @@ import (
 	"github.com/zipstack/pct-plugin-framework/schema"
 	"github.com/zipstack/pct-plugin-framework/server"
 
-	"github.com/zipstack/pct-provider-airbyte/plugin"
+	"github.com/zipstack/pct-provider-airbyte-local/plugin"
 )
 
 // Set while building the compiled binary.

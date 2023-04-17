@@ -1,4 +1,4 @@
-module github.com/zipstack/pct-provider-airbyte
+module github.com/zipstack/pct-provider-airbyte-local
 
 go 1.19
 

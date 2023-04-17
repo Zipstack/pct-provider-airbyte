@@ -7,7 +7,7 @@ package plugin
 // 	"github.com/zipstack/pct-plugin-framework/fwhelpers"
 // 	"github.com/zipstack/pct-plugin-framework/schema"
 
-// 	"github.com/zipstack/pct-provider-airbyte/api"
+// 	"github.com/zipstack/pct-provider-airbyte-local/api"
 // )
 
 // // Resource implementation.
