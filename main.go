@@ -14,10 +14,16 @@ func main() {
 	server.Serve(version, plugin.NewProvider, []func() schema.ResourceService{
 		plugin.NewConnectionResource,
 
-		plugin.NewSourcePipedriveResource,
 		// plugin.NewSourceFakerResource,
+		plugin.NewSourcePipedriveResource,
+		plugin.NewSourceStripeResource,
+		plugin.NewSourceAmplitudeResource,
+		plugin.NewSourceShopifyResource,
+		plugin.NewSourceFreshdeskResource,
+		plugin.NewSourceZendeskSupportResource,
+		plugin.NewSourceHubspotResource,
 
-		plugin.NewDestinationLocalCSVResource,
 		// plugin.NewDestinationPostgresResource,
+		plugin.NewDestinationLocalCSVResource,
 	})
 }
