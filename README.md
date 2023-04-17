@@ -1,2 +1,2 @@
-# pct-provider-airbyte
-Airbyte provider plugin for PCT
+# pct-provider-airbyte-local
+Airbyte local provider plugin for PCT
