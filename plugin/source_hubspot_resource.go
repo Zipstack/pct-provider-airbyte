@@ -103,7 +103,6 @@ func (r *sourceHubspotResource) Schema() *schema.ServiceResponse {
 			"connection_configuration": &schema.MapAttribute{
 				Description: "Connection configuration",
 				Required:    true,
-				//Sensitive:   true,
 				Attributes: map[string]schema.Attribute{
 					"start_date": &schema.StringAttribute{
 						Description: "Start Date",
@@ -120,24 +119,25 @@ func (r *sourceHubspotResource) Schema() *schema.ServiceResponse {
 							},
 							"access_token": &schema.StringAttribute{
 								Description: "Access Token",
-								Required:    false,
 								Sensitive:   true,
+								Required:    true,
 								Optional:    true,
 							},
 							"refresh_token": &schema.StringAttribute{
 								Description: "Refresh Token",
-								Required:    false,
 								Sensitive:   true,
+								Required:    true,
 								Optional:    true,
 							},
 							"client_secret": &schema.StringAttribute{
 								Description: "Client Secret",
-								Required:    false,
+								Sensitive:   true,
+								Required:    true,
 								Optional:    true,
 							},
 							"client_id": &schema.StringAttribute{
 								Description: "Client ID",
-								Required:    false,
+								Required:    true,
 								Optional:    true,
 							},
 						},

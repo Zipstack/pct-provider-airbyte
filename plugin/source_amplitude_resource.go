@@ -97,11 +97,10 @@ func (r *sourceAmplitudeResource) Schema() *schema.ServiceResponse {
 			"connection_configuration": &schema.MapAttribute{
 				Description: "Connection configuration",
 				Required:    true,
-				//Sensitive:   true,
 				Attributes: map[string]schema.Attribute{
 					"data_region": &schema.StringAttribute{
 						Description: "Data region",
-						Required:    false,
+						Required:    true,
 					},
 					"secret_key": &schema.StringAttribute{
 						Description: "Secret Key",

@@ -90,7 +90,6 @@ func (r *sourceZendeskSupportResource) Schema() *schema.ServiceResponse {
 			},
 			"source_id": &schema.StringAttribute{
 				Description: "Source ID",
-				Required:    false,
 				Computed:    true,
 			},
 			"source_definition_id": &schema.StringAttribute{
@@ -104,7 +103,6 @@ func (r *sourceZendeskSupportResource) Schema() *schema.ServiceResponse {
 			"connection_configuration": &schema.MapAttribute{
 				Description: "Connection configuration",
 				Required:    true,
-				//Sensitive:   true,
 				Attributes: map[string]schema.Attribute{
 					"start_date": &schema.StringAttribute{
 						Description: "Start Date",
@@ -116,12 +114,11 @@ func (r *sourceZendeskSupportResource) Schema() *schema.ServiceResponse {
 					},
 					"ignore_pagination": &schema.BoolAttribute{
 						Description: "ignore_pagination",
-						Required:    false,
+						Required:    true,
 					},
 					"credentials": &schema.MapAttribute{
 						Description: "credentials",
 						Required:    true,
-
 						Attributes: map[string]schema.Attribute{
 							"credentials": &schema.StringAttribute{
 								Description: "credentials",
@@ -129,16 +126,16 @@ func (r *sourceZendeskSupportResource) Schema() *schema.ServiceResponse {
 							},
 							"api_token": &schema.StringAttribute{
 								Description: "API Token",
-								Required:    false,
+								Required:    true,
 								Sensitive:   true,
 							},
 							"email": &schema.StringAttribute{
 								Description: "Email",
-								Required:    false,
+								Required:    true,
 							},
 							"access_token": &schema.StringAttribute{
 								Description: "Access Token",
-								Required:    false,
+								Required:    true,
 								Sensitive:   true,
 							},
 						},

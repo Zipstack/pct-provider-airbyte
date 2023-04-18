@@ -84,7 +84,6 @@ func (r *sourceStripeResource) Schema() *schema.ServiceResponse {
 			},
 			"source_id": &schema.StringAttribute{
 				Description: "Source ID",
-				Required:    false,
 				Computed:    true,
 			},
 			"source_definition_id": &schema.StringAttribute{
@@ -98,7 +97,6 @@ func (r *sourceStripeResource) Schema() *schema.ServiceResponse {
 			"connection_configuration": &schema.MapAttribute{
 				Description: "Connection configuration",
 				Required:    true,
-				//Sensitive:   true,
 				Attributes: map[string]schema.Attribute{
 					"start_date": &schema.StringAttribute{
 						Description: "Start Date",
@@ -106,15 +104,16 @@ func (r *sourceStripeResource) Schema() *schema.ServiceResponse {
 					},
 					"slice_range": &schema.IntAttribute{
 						Description: "Slice Range",
-						Required:    false,
+						Required:    true,
 					},
 					"lookback_window_days": &schema.IntAttribute{
 						Description: "lookback window days",
-						Required:    false,
+						Required:    true,
 					},
 					"client_secret": &schema.StringAttribute{
 						Description: "Client Secret",
 						Required:    true,
+						Sensitive:   true,
 					},
 					"account_id": &schema.StringAttribute{
 						Description: "Account Id",
