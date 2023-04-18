@@ -90,7 +90,6 @@ func (r *sourceShopifyResource) Schema() *schema.ServiceResponse {
 			},
 			"source_id": &schema.StringAttribute{
 				Description: "Source ID",
-				Required:    false,
 				Computed:    true,
 			},
 			"source_definition_id": &schema.StringAttribute{
@@ -104,7 +103,6 @@ func (r *sourceShopifyResource) Schema() *schema.ServiceResponse {
 			"connection_configuration": &schema.MapAttribute{
 				Description: "Connection configuration",
 				Required:    true,
-				//Sensitive:   true,
 				Attributes: map[string]schema.Attribute{
 					"start_date": &schema.StringAttribute{
 						Description: "Start Date",
@@ -116,8 +114,7 @@ func (r *sourceShopifyResource) Schema() *schema.ServiceResponse {
 					},
 					"credentials": &schema.MapAttribute{
 						Description: "Connection configuration",
-						// Required:    true,
-
+						Required:    true,
 						Attributes: map[string]schema.Attribute{
 							"auth_method": &schema.StringAttribute{
 								Description: "Auth Method",
@@ -125,22 +122,22 @@ func (r *sourceShopifyResource) Schema() *schema.ServiceResponse {
 							},
 							"api_password": &schema.StringAttribute{
 								Description: "API Password",
-								Required:    false,
+								Required:    true,
 								Sensitive:   true,
 							},
 							"client_secret": &schema.StringAttribute{
 								Description: "Client Secret",
-								Required:    false,
+								Required:    true,
 								Sensitive:   true,
 							},
 							"access_token": &schema.StringAttribute{
 								Description: "Access Token",
-								Required:    false,
+								Required:    true,
 								Sensitive:   true,
 							},
 							"client_id": &schema.StringAttribute{
 								Description: "Client ID",
-								Required:    false,
+								Required:    true,
 								Sensitive:   true,
 							},
 						},

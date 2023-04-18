@@ -83,7 +83,6 @@ func (r *sourceFreshdeskResource) Schema() *schema.ServiceResponse {
 			},
 			"source_id": &schema.StringAttribute{
 				Description: "Source ID",
-				Required:    false,
 				Computed:    true,
 			},
 			"source_definition_id": &schema.StringAttribute{
@@ -97,7 +96,6 @@ func (r *sourceFreshdeskResource) Schema() *schema.ServiceResponse {
 			"connection_configuration": &schema.MapAttribute{
 				Description: "Connection configuration",
 				Required:    true,
-				//Sensitive:   true,
 				Attributes: map[string]schema.Attribute{
 					"start_date": &schema.StringAttribute{
 						Description: "Start Date",
@@ -115,7 +113,7 @@ func (r *sourceFreshdeskResource) Schema() *schema.ServiceResponse {
 					},
 					"requests_per_minute": &schema.IntAttribute{
 						Description: "Request Per Minute",
-						Required:    false,
+						Required:    true,
 					},
 				},
 			},
